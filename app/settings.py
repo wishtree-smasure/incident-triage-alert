@@ -1,0 +1,22 @@
+"""Settings read from environment variables / the .env file."""
+
+from pathlib import Path
+
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=PROJECT_ROOT / ".env", extra="ignore")
+
+    anthropic_api_key: str = ""
+    llm_model: str = "claude-sonnet-4-5"
+    max_tool_calls: int = 10
+    max_investigation_sec: int = 180
+    dedup_ttl_min: int = 15
+    teams_webhook_url: str = ""
+    app_base_url: str = "http://localhost:8000"
+
+    sources_path: Path = PROJECT_ROOT / "config" / "sources.yaml"
+    playbook_path: Path = PROJECT_ROOT / "config" / "playbook.yaml"

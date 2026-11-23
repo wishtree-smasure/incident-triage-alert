@@ -1,0 +1,79 @@
+# Playbook: known problems, what to do right now, and how to fix them properly.
+#
+# Each rule's "match" is a regular expression (case-insensitive) checked against the
+# alert's title, error message and description. The first matching rule wins.
+#   cause:     the likely reason
+#   immediate: the fastest way to stop the damage now (shown for show stoppers)
+#   fix:       the proper fix afterwards
+# Adding a new suggested fix = adding a rule here (no code change).
+#
+# These are quick suggestions. The AI agent (build step 3) confirms the real root cause
+# with evidence from logs, metrics and audit events.
+
+rules:
+  # ---- errors from the sample shop's code
+  - match: "'NoneType' object is not subscriptable"
+    cause: "The code reads a field from a value that is None (missing). Here: an order without a coupon."
+    immediate: "Roll back the last release, or put a hotfix in front of the failing line that treats a missing value as empty."
+    fix: "Check for None before using the value, e.g. coupon = order.get('coupon'); discount = coupon['percent'] if coupon else 0. Add a test for orders without a coupon."
+
+  - match: "connection pool exhausted|DatabaseConnections|connections-max|db-connections"
+    cause: "All database connections are in use, so new requests wait and then time out."
+    immediate: "Restart the affected service instances to release stuck connections, and temporarily raise the pool size / max_connections."
+    fix: "Find connections that are not released (missing close / context manager), then raise the pool size or the database max_connections if load really grew. Add a timeout and retry when getting a connection."
+
+  - match: "could not convert string to float|invalid literal for int"
+    cause: "A configuration value is not a valid number, e.g. '9,99' (comma) instead of '9.99'."
+    immediate: "Correct the bad config value (or revert the last config change) and restart the service."
+    fix: "Correct the value in the config to use a dot as the decimal separator, and validate numeric config values at startup so a bad value fails fast."
+
+  - match: "Slow order processing"
+    cause: "Some orders take longer than the 2 s limit, usually a slow database query or external call."
+    immediate: "Scale out the service and check whether a dependency is degraded."
+    fix: "Look at traces for the slow orders to find the slow step, then add an index, a cache, or a timeout on the external call."
+
+  # ---- vendor sample alerts
+  - match: "NullPointerException"
+    cause: "New code dereferences an object that can be null."
+    immediate: "Roll back to the previous version now (e.g. v2.14.0 -> v2.13.x)."
+    fix: "Add a null check and a test for the failing path, then redeploy."
+
+  - match: "5xx"
+    cause: "The service is returning server errors. Most often caused by a recent deploy or a failing dependency."
+    immediate: "If a deploy happened in the last hour, roll it back. Otherwise fail over or scale out and page the owning team."
+    fix: "Check what changed in the last hour. If a deploy lines up with the spike, roll it back. Otherwise check the top errors and the health of downstream dependencies."
+
+  - match: "401/403"
+    cause: "Requests are rejected as unauthorized, often after a permission, role or credential change."
+    immediate: "Restore the removed role assignment / permission on the service's identity (check the audit log for who removed it)."
+    fix: "Check the audit log for recent role assignment or identity changes and restore the missing permission. Protect critical role assignments with a resource lock or PIM approval."
+
+  - match: "dependency failures"
+    cause: "Calls to an external service are failing."
+    immediate: "Turn on the fallback / degraded mode for that dependency and check its status page."
+    fix: "Add retries with backoff and a circuit breaker so failures don't cascade."
+
+  - match: "cache miss"
+    cause: "The cache is being missed often, e.g. after a restart, an eviction storm, or a key change."
+    immediate: "Warm the cache and check that the cache service is healthy."
+    fix: "Check if the cache was recently restarted or its size reduced, and warm it up or increase its memory."
+
+  - match: "latency"
+    cause: "Requests are getting slower, usually from database pressure, a slow dependency, or too little capacity."
+    immediate: "Scale out the service and check database connections and CPU."
+    fix: "Compare latency with database connections, CPU and dependency timings to find the bottleneck, then scale or fix that part."
+
+  - match: "OOMKilled|out of memory"
+    cause: "The process uses more memory than its limit and is killed."
+    immediate: "Raise the memory limit and re-run the job."
+    fix: "Check for a memory leak or a too-large batch, process data in smaller chunks, or raise the memory limit permanently."
+
+  - match: "queue backlog|queue depth"
+    cause: "Messages arrive faster than the consumers process them."
+    immediate: "Add more consumers / restart stuck consumers."
+    fix: "Check that consumers are running and healthy, then fix the slow step in processing."
+
+  - match: "Disk usage"
+    cause: "The disk is filling up, often from logs or old files that are never cleaned."
+    immediate: "Free space now: delete or move old logs and temp files."
+    fix: "Add log rotation and a cleanup job, or increase the disk size."

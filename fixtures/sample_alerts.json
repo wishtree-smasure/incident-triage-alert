@@ -1,0 +1,194 @@
+[
+  {
+    "note": "INCIDENT - bad deploy: 5xx spike on checkout after v2.14.0",
+    "source_id": "datadog-prod",
+    "repeat": 3,
+    "payload": {
+      "title": "[Triggered] checkout-api 5xx rate above 5%",
+      "body": "5xx error rate is 12.4% (threshold 5%) for service:checkout-api env:prod",
+      "date": "1795600800000",
+      "priority": "P2",
+      "tags": "service:checkout-api,env:prod,team:payments",
+      "alert_scope": "service:checkout-api,env:prod"
+    }
+  },
+  {
+    "note": "INCIDENT - NullPointerException errors in the new payment code path",
+    "source_id": "datadog-prod",
+    "payload": {
+      "title": "[Triggered] checkout-api java.lang.NullPointerException in PaymentClient.authorize",
+      "body": "412 errors in 10 min: NullPointerException at com.shop.payment.PaymentClient.authorize(PaymentClient.java:88)",
+      "date": "1795600860000",
+      "priority": "P1",
+      "tags": "service:checkout-api,env:prod,error.type:NullPointerException",
+      "alert_scope": "service:checkout-api,env:prod,resource:POST /checkout"
+    }
+  },
+  {
+    "note": "INCIDENT - database connection pool exhausted (CloudWatch has no severity, so it counts as an alert)",
+    "source_id": "cloudwatch-prod",
+    "payload": {
+      "Type": "Notification",
+      "Subject": "ALARM: \"orders-service-p99-latency\"",
+      "Message": {
+        "AlarmName": "orders-service-p99-latency",
+        "NewStateValue": "ALARM",
+        "NewStateReason": "Threshold Crossed: 3 datapoints [4.1, 3.8, 4.4] were greater than the threshold (2.0).",
+        "StateChangeTime": "2026-11-20T06:05:00.000+0000",
+        "Region": "US East (N. Virginia)",
+        "AlarmArn": "arn:aws:cloudwatch:us-east-1:123456789012:alarm:orders-service-p99-latency",
+        "Trigger": {
+          "MetricName": "TargetResponseTime",
+          "Dimensions": [
+            {
+              "name": "LoadBalancer",
+              "value": "app/orders-alb/50dc6c495c0c9188"
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "note": "INCIDENT - RDS connections at max",
+    "source_id": "cloudwatch-prod",
+    "payload": {
+      "Type": "Notification",
+      "Subject": "ALARM: \"orders-db-connections-max\"",
+      "Message": {
+        "AlarmName": "orders-db-connections-max",
+        "NewStateValue": "ALARM",
+        "NewStateReason": "Threshold Crossed: 1 datapoint [200.0] was greater than or equal to the threshold (190.0).",
+        "StateChangeTime": "2026-11-20T06:04:00.000+0000",
+        "Region": "US East (N. Virginia)",
+        "AlarmArn": "arn:aws:cloudwatch:us-east-1:123456789012:alarm:orders-db-connections-max",
+        "Trigger": {
+          "MetricName": "DatabaseConnections",
+          "Dimensions": [
+            {
+              "name": "DBInstanceIdentifier",
+              "value": "orders-db"
+            }
+          ]
+        }
+      }
+    }
+  },
+  {
+    "note": "INCIDENT - SEV1: auth failures after a role assignment was removed",
+    "source_id": "azure-prod",
+    "payload": {
+      "schemaId": "azureMonitorCommonAlertSchema",
+      "data": {
+        "essentials": {
+          "alertRule": "auth-gateway 401/403 rate high",
+          "severity": "Sev0",
+          "signalType": "Log",
+          "monitorCondition": "Fired",
+          "alertTargetIDs": [
+            "/subscriptions/0000/resourcegroups/rg-identity/providers/microsoft.insights/components/auth-gateway"
+          ],
+          "firedDateTime": "2026-11-20T06:10:12Z",
+          "description": "Share of 401/403 responses exceeded 20% over 5 minutes"
+        }
+      }
+    }
+  },
+  {
+    "note": "INCIDENT - in-house job crashed",
+    "source_id": "inhouse-app",
+    "payload": {
+      "title": "Payment reconciliation job crashed",
+      "service": "billing-service",
+      "description": "reconcile-payments exited with code 137 (OOMKilled) three times in a row",
+      "severity": "SEV2",
+      "fired_at": "2026-11-20T05:58:00Z",
+      "resource": "job/reconcile-payments",
+      "labels": {
+        "env": "prod"
+      }
+    }
+  },
+  {
+    "note": "WARNING - latency creeping up",
+    "source_id": "datadog-prod",
+    "payload": {
+      "title": "[Warn] checkout-api p95 latency above 800ms",
+      "body": "p95 latency is 910ms (warning threshold 800ms)",
+      "date": "1795600500000",
+      "priority": "P3",
+      "tags": "service:checkout-api,env:prod",
+      "alert_scope": "service:checkout-api,env:prod"
+    }
+  },
+  {
+    "note": "WARNING - downstream dependency errors",
+    "source_id": "azure-prod",
+    "payload": {
+      "schemaId": "azureMonitorCommonAlertSchema",
+      "data": {
+        "essentials": {
+          "alertRule": "auth-gateway Microsoft Graph dependency failures",
+          "severity": "Sev2",
+          "signalType": "Metric",
+          "monitorCondition": "Fired",
+          "alertTargetIDs": [
+            "/subscriptions/0000/resourcegroups/rg-identity/providers/microsoft.insights/components/auth-gateway"
+          ],
+          "firedDateTime": "2026-11-20T05:50:00Z",
+          "description": "Dependency call failure rate to graph.microsoft.com is 4% (threshold 2%)"
+        }
+      }
+    }
+  },
+  {
+    "note": "WARNING - token cache misses",
+    "source_id": "azure-prod",
+    "payload": {
+      "schemaId": "azureMonitorCommonAlertSchema",
+      "data": {
+        "essentials": {
+          "alertRule": "auth-gateway token cache miss rate high",
+          "severity": "Sev3",
+          "signalType": "Metric",
+          "monitorCondition": "Fired",
+          "alertTargetIDs": [
+            "/subscriptions/0000/resourcegroups/rg-identity/providers/microsoft.insights/components/auth-gateway"
+          ],
+          "firedDateTime": "2026-11-20T05:45:00Z",
+          "description": "Token cache miss rate is 35% (threshold 25%)"
+        }
+      }
+    }
+  },
+  {
+    "note": "WARNING - queue backlog",
+    "source_id": "inhouse-app",
+    "payload": {
+      "title": "Email queue backlog growing",
+      "service": "notification-service",
+      "description": "notifications queue depth 18,400 and rising for 20 minutes",
+      "severity": "SEV3",
+      "fired_at": "2026-11-20T05:40:00Z",
+      "resource": "queue/notifications",
+      "labels": {
+        "env": "prod"
+      }
+    }
+  },
+  {
+    "note": "WARNING - disk usage",
+    "source_id": "inhouse-app",
+    "payload": {
+      "title": "Disk usage above 85% on report-worker",
+      "service": "reporting-service",
+      "description": "/var/lib/reports is 87% full",
+      "severity": "SEV4",
+      "fired_at": "2026-11-20T05:30:00Z",
+      "resource": "host/report-worker-2",
+      "labels": {
+        "env": "prod"
+      }
+    }
+  }
+]

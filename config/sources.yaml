@@ -1,0 +1,38 @@
+# Source Registry. Adding a monitoring source = add an entry here (no code change).
+# secret_env names the env var holding the HMAC secret (stand-in for Key Vault).
+sources:
+  - id: datadog-prod
+    name: Datadog prod
+    type: datadog
+    service: checkout-api
+    owner_team: payments
+    secret_env: SRC_DATADOG_SECRET
+    connector: mock
+    scenario: bad_deploy_datadog
+
+  - id: cloudwatch-prod
+    name: AWS prod
+    type: cloudwatch
+    service: orders-service
+    owner_team: orders-platform
+    secret_env: SRC_CLOUDWATCH_SECRET
+    connector: mock
+    scenario: db_pool_cloudwatch
+
+  - id: azure-prod
+    name: Azure prod
+    type: azure_monitor
+    service: auth-gateway
+    owner_team: identity
+    secret_env: SRC_AZURE_SECRET
+    connector: mock
+    scenario: iam_change_azure
+
+  - id: inhouse-app
+    name: In-house logs
+    type: generic
+    service: inhouse-app
+    owner_team: platform
+    secret_env: SRC_GENERIC_SECRET
+    connector: mock
+    scenario: bad_deploy_datadog

@@ -1,0 +1,15 @@
+{
+  "id": "7380000000000000001",
+  "title": "[Triggered on {service:checkout-api}] checkout-api 5xx rate above 5%",
+  "body": "5xx error rate is 12.4% (threshold 5%) for service:checkout-api env:prod",
+  "date": "1795082400000",
+  "alert_id": "148201",
+  "alert_type": "error",
+  "alert_transition": "Triggered",
+  "priority": "P2",
+  "tags": "service:checkout-api,env:prod,team:payments",
+  "hostname": "",
+  "alert_metric": "trace.http.request.errors",
+  "alert_scope": "service:checkout-api,env:prod",
+  "link": "https://app.datadoghq.com/monitors/148201"
+}

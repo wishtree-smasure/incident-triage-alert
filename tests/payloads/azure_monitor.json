@@ -1,0 +1,23 @@
+{
+  "schemaId": "azureMonitorCommonAlertSchema",
+  "data": {
+    "essentials": {
+      "alertId": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AlertsManagement/alerts/1b2c3d4e",
+      "alertRule": "auth-gateway 401/403 rate high",
+      "severity": "Sev1",
+      "signalType": "Log",
+      "monitorCondition": "Fired",
+      "monitoringService": "Application Insights",
+      "alertTargetIDs": [
+        "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-identity/providers/microsoft.insights/components/auth-gateway"
+      ],
+      "originAlertId": "1b2c3d4e",
+      "firedDateTime": "2026-11-19T09:30:12.345Z",
+      "description": "Share of 401/403 responses exceeded 20% over 5 minutes",
+      "essentialsVersion": "1.0",
+      "alertContextVersion": "1.0"
+    },
+    "alertContext": {},
+    "customProperties": {"env": "prod"}
+  }
+}

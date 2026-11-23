@@ -1,0 +1,161 @@
+{# API analysis tab. Variables: traffic_apps, app_rows, app, analysis #}
+
+{% macro health_badge(state) -%}
+  <span class="health health-{{ state }}"><span class="health-icon" aria-hidden="true">{{ {'healthy': '✓', 'degraded': '▲', 'unhealthy': '✖'}[state] }}</span> {{ state|capitalize }}</span>
+{%- endmacro %}
+{% macro ms(value) %}{{ '{:,.0f}'.format(value) }} ms{% endmacro %}
+{% macro pct(value, digits=1) %}{{ ('{:.' ~ digits ~ '%}').format(value) }}{% endmacro %}
+{% macro hour(h) %}{% if h is none %}—{% else %}{{ '%02d' % h }}:00{% endif %}{% endmacro %}
+
+{# ---------------------------------------------------------------- applications #}
+<h2 class="section-title">Applications</h2>
+<nav class="apps">
+  <a class="app-card {{ 'active' if not app }}" href="{{ link(app=None) }}">
+    <div class="app-name">All applications</div>
+    <div class="app-counts">{{ traffic_apps|length }} with API traffic</div>
+  </a>
+  {% for row in app_rows %}
+  <a class="app-card {{ 'active' if app == row.app }}" href="{{ link(app=row.app) }}">
+    <div class="app-name">{{ row.app }}</div>
+    <div class="app-counts">{{ health_badge(row.health) }} · {{ '{:,}'.format(row.calls) }} calls</div>
+  </a>
+  {% endfor %}
+</nav>
+
+{% if not traffic_apps %}
+  <div class="card empty">
+    No API traffic yet. Load 24 hours of sample traffic with <code>python scripts/generate_traffic.py</code>,
+    or run the sample shop and the log watcher.
+  </div>
+
+{% elif not app %}
+{# ---------------------------------------------------------------- all applications #}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Application</th><th>Health</th><th class="num">API calls</th><th class="num">Avg</th>
+          <th class="num">p95</th><th class="num">Server errors</th><th class="num">Client errors</th>
+          <th>Peak hour (UTC)</th><th>Busiest API</th><th class="num">Open alerts</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in app_rows %}
+        <tr>
+          <td><a href="{{ link(app=row.app) }}">{{ row.app }}</a></td>
+          <td>{{ health_badge(row.health) }}</td>
+          <td class="num">{{ '{:,}'.format(row.calls) }}</td>
+          <td class="num">{{ ms(row.avg_ms) }}</td>
+          <td class="num">{{ ms(row.p95_ms) }}</td>
+          <td class="num">{{ pct(row.error_rate) }}</td>
+          <td class="num">{{ pct(row.client_error_rate) }}</td>
+          <td>{{ hour(row.peak_hour) }}</td>
+          <td><code>{{ row.top_api }}</code></td>
+          <td class="num">{{ row.open_alerts }}{% if row.show_stoppers %} <span class="stopper-pill">({{ row.show_stoppers }} SEV1)</span>{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Health: <strong>unhealthy</strong> if 5%+ server errors, p95 ≥ 2,000 ms, or an open show-stopper alert;
+    <strong>degraded</strong> if 1%+ server errors, p95 ≥ 800 ms, or 10%+ client errors on an API.</p>
+
+{% elif not analysis %}
+  <div class="card empty">No API traffic recorded for <strong>{{ app }}</strong>.</div>
+
+{% else %}
+{# ---------------------------------------------------------------- one application #}
+  {% set a = analysis %}{% set o = a.overview %}
+  <h2 class="app-heading">{{ app }} {{ health_badge(o.health) }}</h2>
+
+  <section class="tiles">
+    <div class="tile"><div class="label">API calls</div><div class="value">{{ '{:,}'.format(o.calls) }}</div><div class="hint">{{ '{:,.1f}'.format(a.calls_per_min) }} per minute</div></div>
+    <div class="tile"><div class="label">Avg response</div><div class="value">{{ ms(o.avg_ms) }}</div><div class="hint">median {{ ms(o.p50_ms) }}</div></div>
+    <div class="tile"><div class="label">p95 / p99</div><div class="value">{{ ms(o.p95_ms) }}</div><div class="hint">p99 {{ ms(o.p99_ms) }} · max {{ ms(o.max_ms) }}</div></div>
+    <div class="tile"><div class="label">Availability</div><div class="value">{{ pct(a.availability, 2) }}</div><div class="hint">calls without a server error</div></div>
+    <div class="tile"><div class="label">Server errors (5xx)</div><div class="value">{{ pct(o.error_rate) }}</div><div class="hint">{{ '{:,}'.format(a.status_groups['5xx']) }} calls</div></div>
+    <div class="tile"><div class="label">Client errors (4xx)</div><div class="value">{{ pct(o.client_error_rate) }}</div><div class="hint">{{ '{:,}'.format(a.status_groups['4xx']) }} calls</div></div>
+    <div class="tile"><div class="label">Peak hour (UTC)</div><div class="value">{{ hour(o.peak_hour) }}</div><div class="hint">{{ '{:,}'.format(o.peak_count) }} calls{% if a.spike %} · {{ '{:.1f}'.format(a.spike) }}× average{% endif %}</div></div>
+    <div class="tile"><div class="label">Quietest hour (UTC)</div><div class="value">{{ hour(a.quiet_hour) }}</div><div class="hint">best maintenance window</div></div>
+    <div class="tile"><div class="label">Open alerts</div><div class="value">{{ a.open_alerts }}</div><div class="hint">{% if a.show_stoppers %}{{ a.show_stoppers }} show stopper{{ 's' if a.show_stoppers != 1 }} · {% endif %}<a href="{{ link(view=None) }}">see Alerts</a></div></div>
+  </section>
+
+  {# ---- traffic by hour #}
+  <section class="card">
+    <h2>API calls by hour of day (UTC)</h2>
+    {% set busiest = a.hourly|map(attribute='calls')|max %}
+    <div class="chart" role="img" aria-label="API calls per hour of day; busiest at {{ hour(o.peak_hour) }} UTC with {{ o.peak_count }} calls">
+      <div class="chart-ymax">{{ '{:,}'.format(busiest) }}</div>
+      <div class="bars">
+        {% for h in a.hourly %}
+        <div class="bar-slot" data-tip="{{ '%02d' % h.hour }}:00–{{ '%02d' % ((h.hour + 1) % 24) }}:00 · {{ '{:,}'.format(h.calls) }} calls">
+          {% if h.hour == o.peak_hour %}<span class="bar-label">Peak</span>{% endif %}
+          <div class="bar" style="height: {{ h.height }}%"></div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="bar-axis">
+        {% for h in a.hourly %}<span>{{ '%02d' % h.hour if h.hour % 3 == 0 else '' }}</span>{% endfor %}
+      </div>
+    </div>
+    <details class="chart-table">
+      <summary>Show as table</summary>
+      <table>
+        <thead><tr><th>Hour (UTC)</th><th class="num">API calls</th></tr></thead>
+        <tbody>{% for h in a.hourly %}<tr><td>{{ '%02d' % h.hour }}:00</td><td class="num">{{ '{:,}'.format(h.calls) }}</td></tr>{% endfor %}</tbody>
+      </table>
+    </details>
+  </section>
+
+  {# ---- recommendations #}
+  <section class="card">
+    <h2>Recommended optimisations</h2>
+    {% if a.recommendations %}
+    <ol class="recs">
+      {% for r in a.recommendations %}
+      <li><code>{{ r.api }}</code> — {{ r.text }}</li>
+      {% endfor %}
+    </ol>
+    {% else %}
+    <p class="muted">Nothing to improve right now: every API is fast, error-free and not worth caching.</p>
+    {% endif %}
+    <dl class="facts highlights">
+      {% if a.apis %}<dt>Busiest API</dt><dd><code>{{ a.apis[0].method }} {{ a.apis[0].path }}</code> · {{ pct(a.apis[0].share, 0) }} of calls</dd>{% endif %}
+      {% if a.slowest %}<dt>Slowest API</dt><dd><code>{{ a.slowest.method }} {{ a.slowest.path }}</code> · p95 {{ ms(a.slowest.p95_ms) }}</dd>{% endif %}
+      {% if a.most_errors %}<dt>Most server errors</dt><dd><code>{{ a.most_errors.method }} {{ a.most_errors.path }}</code> · {{ pct(a.most_errors.error_rate) }}</dd>{% endif %}
+      <dt>Status codes</dt>
+      <dd>{% for group, n in a.status_groups.items() %}{{ group }} {{ '{:,}'.format(n) }}{{ ' · ' if not loop.last }}{% endfor %}</dd>
+    </dl>
+  </section>
+
+  {# ---- per API #}
+  <h2 class="section-title">APIs by number of calls</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>API</th><th class="num">Calls</th><th class="num">Share</th><th class="num">Avg</th><th class="num">p95</th>
+          <th class="num">5xx</th><th class="num">4xx</th><th>Health</th><th>Peak (UTC)</th><th>Cacheable?</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for api in a.apis %}
+        <tr>
+          <td><code>{{ api.method }} {{ api.path }}</code></td>
+          <td class="num">{{ '{:,}'.format(api.calls) }}</td>
+          <td class="num">{{ pct(api.share, 0) }}</td>
+          <td class="num">{{ ms(api.avg_ms) }}</td>
+          <td class="num">{{ ms(api.p95_ms) }}</td>
+          <td class="num">{{ pct(api.error_rate) }}</td>
+          <td class="num">{{ pct(api.client_error_rate) }}</td>
+          <td>{{ health_badge(api.health) }}</td>
+          <td>{{ hour(api.peak_hour) }}</td>
+          <td><span class="cache cache-{{ api.cache }}" title="{{ api.cache_reason }}">{{ {'yes': 'Yes', 'per-user': 'Per user', 'no': 'No'}[api.cache] }}</span></td>
+          <td class="actions">{% for action in api.actions %}<span class="action" title="{{ api.advice[loop.index0] }}">{{ action }}</span>{% else %}<span class="muted">—</span>{% endfor %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Hover "Cacheable?" or an action for the details. Hours are UTC (IST = UTC + 5:30).</p>
+{% endif %}
