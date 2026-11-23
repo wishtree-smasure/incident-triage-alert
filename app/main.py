@@ -10,7 +10,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import ValidationError
 
-from app import analysis, dashboard
+from app import analysis, dashboard, demo
 from app.dedup import DedupCache, fingerprint
 from app.models import ApiCallBatch, Investigation
 from app.normalizers import NormalizationError, normalize
@@ -50,7 +50,10 @@ def create_app(registry: Registry | None = None, settings: Settings | None = Non
         app.state.dedup = DedupCache(ttl_minutes=app.state.settings.dedup_ttl_min)
         app.state.store = InvestigationStore()
         app.state.traffic = TrafficStore()
+        stop_demo = demo.start(app.state.registry) if app.state.settings.demo_mode else None
         yield
+        if stop_demo:
+            stop_demo.set()
 
     app = FastAPI(title="Incident Triage Agent", lifespan=lifespan)
 
