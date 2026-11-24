@@ -19,7 +19,7 @@ from app.playbook import load_playbook, suggest
 from app.registry import Registry, Source, load_registry
 from app.security import is_valid_signature
 from app.settings import PROJECT_ROOT, Settings
-from app.store import InvestigationStore
+from app.store import MAX_ITEMS, InvestigationStore
 from app.traffic import TrafficStore
 
 templates = Jinja2Templates(directory=PROJECT_ROOT / "app" / "templates")
@@ -104,7 +104,10 @@ def create_app(registry: Registry | None = None, settings: Settings | None = Non
     def investigation_page(request: Request, investigation_id: str):
         inv = request.app.state.store.get(investigation_id)
         if inv is None:
-            raise HTTPException(404, "investigation not found")
+            # A friendly page, not raw JSON: usually an old link from before a restart.
+            context = {"investigation_id": investigation_id, "kept": MAX_ITEMS,
+                       "saved": request.app.state.store.db is not None}
+            return templates.TemplateResponse(request, "not_found.html", context, status_code=404)
         still_working = inv.status in ("queued", "running")
         context = {
             "inv": inv,

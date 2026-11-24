@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Alert not found · Incident Triage{% endblock %}
+{% block content %}
+  <p><a href="/">← All alerts</a></p>
+  <h1>This alert is no longer here</h1>
+  <p class="sub">No alert with ID <code>{{ investigation_id }}</code>.</p>
+  <section class="card">
+    <p>This usually means the link is from before the app restarted or was redeployed,
+      {% if saved %}or the alert is older than the newest {{ kept }} alerts that are kept.{% else %}and
+      nothing is saved between restarts: set <code>DATABASE_URL</code> to keep alerts across restarts and redeploys.{% endif %}</p>
+    <p>If the problem is still happening, it will show up again on the dashboard under a new link.</p>
+    <p><a href="/">Go to the current alerts →</a></p>
+  </section>
+{% endblock %}

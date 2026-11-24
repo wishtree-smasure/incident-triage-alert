@@ -188,3 +188,10 @@ def test_alerts_view_updates_itself_without_meta_refresh(client):
     page = client.get("/").text
     assert 'id="live-region"' in page and "refresh(false)" in page
     assert '<noscript><meta http-equiv="refresh" content="10"></noscript>' in page
+
+
+def test_unknown_investigation_shows_a_friendly_page(client):
+    response = client.get("/investigations/doesnotexist")
+    assert response.status_code == 404
+    assert "This alert is no longer here" in response.text and 'href="/"' in response.text
+    assert "set <code>DATABASE_URL</code>" in response.text  # memory only: explains how to keep alerts

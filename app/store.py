@@ -1,8 +1,8 @@
-"""Keeps the last 50 investigations for the dashboard: in memory, and in the database if one is set."""
+"""Keeps the last 200 investigations for the dashboard: in memory, and in the database if one is set."""
 
 from app.models import Investigation
 
-MAX_ITEMS = 50
+MAX_ITEMS = 200
 
 
 class InvestigationStore:
