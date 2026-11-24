@@ -16,6 +16,7 @@ from app.dedup import DedupCache, fingerprint
 from app.models import ApiCallBatch, Investigation
 from app.normalizers import NormalizationError, normalize
 from app.playbook import load_playbook, suggest
+from app.location import code_location
 from app.registry import Registry, Source, load_registry
 from app.security import is_valid_signature
 from app.settings import PROJECT_ROOT, Settings
@@ -23,6 +24,7 @@ from app.store import MAX_ITEMS, InvestigationStore
 from app.traffic import TrafficStore
 
 templates = Jinja2Templates(directory=PROJECT_ROOT / "app" / "templates")
+templates.env.globals["code_location"] = code_location
 
 
 def run_investigation(investigation_id: str) -> None:
@@ -129,9 +131,15 @@ def create_app(registry: Registry | None = None, settings: Settings | None = Non
         except (json.JSONDecodeError, UnicodeDecodeError, NormalizationError) as exc:
             raise HTTPException(422, str(exc))
 
-        # 4. Seen this alert recently? Reuse that investigation.
+        # 4. Same alert still open (or seen in the last few minutes)? Count it on that investigation.
+        def state_of(investigation_id: str) -> str | None:
+            inv = state.store.get(investigation_id)
+            if inv is None:
+                return None  # no longer kept: start a new one
+            return "open" if inv.status in ("queued", "running") else "closed"
+
         new_id = uuid.uuid4().hex[:12]
-        inv_id, count, duplicate = state.dedup.check(fingerprint(alert), new_id)
+        inv_id, count, duplicate = state.dedup.check(fingerprint(alert), new_id, state_of)
 
         if duplicate:
             existing = state.store.get(inv_id)

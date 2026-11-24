@@ -57,12 +57,24 @@ def test_only_the_newest_api_calls_are_kept(db_url):
     assert [c.path for c in db.load_calls(100)] == ["/6", "/7", "/8", "/9"]
 
 
-def test_expired_dedup_entries_are_not_loaded(db_url):
+def test_dedup_entries_survive_a_restart_until_a_week_old(db_url):
     db = Database(db_url, PROJECT_ROOT)
     now = 1_000_000.0
     DedupCache(ttl_minutes=15, clock=lambda: now, db=db).check("fp", "inv1")
-    assert "fp" in DedupCache(ttl_minutes=15, clock=lambda: now + 60, db=db).entries
-    assert DedupCache(ttl_minutes=15, clock=lambda: now + 16 * 60, db=db).entries == {}
+    # Past the 15-minute window but still kept: an open investigation keeps its count after a redeploy.
+    assert "fp" in DedupCache(ttl_minutes=15, clock=lambda: now + 3600, db=db).entries
+    assert DedupCache(ttl_minutes=15, clock=lambda: now + 8 * 24 * 3600, db=db).entries == {}
+
+
+def test_open_alert_keeps_counting_after_a_restart(registry, db_url):
+    with make_client(registry, database_url=db_url, dedup_ttl_min=0) as c:  # window 0: only "open" merges
+        first = post_signed(c, "inhouse-app", ALERT).json()
+    with make_client(registry, database_url=db_url, dedup_ttl_min=0) as c:
+        again = post_signed(c, "inhouse-app", ALERT).json()
+        assert again["investigation_id"] == first["investigation_id"] and again["dedup_count"] == 2
+        c.app.state.store.get(first["investigation_id"]).status = "concluded"
+        third = post_signed(c, "inhouse-app", ALERT).json()
+        assert third["investigation_id"] != first["investigation_id"] and not third["deduplicated"]
 
 
 def test_default_database_is_a_local_file(monkeypatch):

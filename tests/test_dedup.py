@@ -49,3 +49,32 @@ def test_after_ttl_a_new_investigation_starts():
     cache.check("fp", "inv-1")
     clock.now = 15 * 60
     assert cache.check("fp", "inv-2") == ("inv-2", 1, False)
+
+
+def test_open_investigation_keeps_counting_after_the_ttl():
+    clock = FakeClock()
+    cache = DedupCache(ttl_minutes=15, clock=clock)
+    cache.check("fp", "inv-1", lambda i: "open")
+    clock.now = 3 * 3600  # hours later, still open: same row, count goes up
+    assert cache.check("fp", "inv-2", lambda i: "open") == ("inv-1", 2, True)
+
+
+def test_closed_investigation_after_the_ttl_starts_a_new_one():
+    clock = FakeClock()
+    cache = DedupCache(ttl_minutes=15, clock=clock)
+    cache.check("fp", "inv-1", lambda i: "open")
+    clock.now = 15 * 60
+    assert cache.check("fp", "inv-2", lambda i: "closed") == ("inv-2", 1, False)
+
+
+def test_closed_investigation_within_the_ttl_is_still_a_duplicate():
+    cache = DedupCache(ttl_minutes=15)
+    cache.check("fp", "inv-1")
+    assert cache.check("fp", "inv-2", lambda i: "closed") == ("inv-1", 2, True)
+
+
+def test_investigation_no_longer_kept_starts_a_new_one_even_within_the_ttl():
+    """Otherwise the repeat would be counted on an investigation nobody can see, and lost."""
+    cache = DedupCache(ttl_minutes=15)
+    cache.check("fp", "inv-1")
+    assert cache.check("fp", "inv-2", lambda i: None) == ("inv-2", 1, False)

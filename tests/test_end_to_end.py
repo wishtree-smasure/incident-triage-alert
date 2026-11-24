@@ -56,7 +56,7 @@ def test_shop_bugs_reach_the_dashboard_with_where_and_fix(shop_log, client, monk
         ("ValueError in shipping_cost()", "sample_app/shop.py:", "Correct the value in the config"),
     ]:
         assert title in page and fix in page
-    assert page.count("sample_app/shop.py:") == 3
+    assert page.count("<code>sample_app/shop.py:") == 3
 
     coupon = next(i for i in client.app.state.store.newest_first() if "apply_coupon" in i.alert.title)
     assert coupon.dedup_count == 2

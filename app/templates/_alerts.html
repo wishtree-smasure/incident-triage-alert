@@ -73,7 +73,8 @@
         </summary>
         <div class="item-body">
           <dl class="facts">
-            {% if inv.alert.labels.file %}<dt>Where</dt><dd><code>{{ inv.alert.labels.file }}:{{ inv.alert.labels.line }}</code>{% if inv.alert.labels.function %} in <code>{{ inv.alert.labels.function }}()</code>{% endif %}</dd>{% endif %}
+            {% set loc = code_location(inv.alert) %}
+            {% if loc %}<dt>Where</dt><dd><code>{{ loc.goto }}</code>{% if loc.function %} in <code>{{ loc.function }}()</code>{% endif %} <button type="button" class="copy" data-copy="{{ loc.goto }}">Copy</button></dd>{% endif %}
             {% if inv.alert.labels.error %}<dt>Error</dt><dd><code>{{ inv.alert.labels.error }}</code></dd>{% endif %}
             {% if inv.suggestion %}
             <dt>Do now</dt><dd>{{ inv.suggestion.immediate }}</dd>

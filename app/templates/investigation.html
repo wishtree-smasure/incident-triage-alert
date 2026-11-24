@@ -11,8 +11,19 @@
 
   <section class="card">
     <h2>Where it breaks</h2>
-    {% if alert.labels.file %}
-      <p class="where"><code>{{ alert.labels.file }}:{{ alert.labels.line }}</code> in <code>{{ alert.labels.function }}()</code></p>
+    {% set loc = code_location(alert) %}
+    {% if loc %}
+      <dl class="facts code-loc">
+        <dt>File</dt>
+        <dd><code class="where">{{ loc.file }}</code> <span class="loc-line">line {{ loc.line }}{% if loc.column %}, column {{ loc.column }}{% endif %}</span></dd>
+        <dt>Folder</dt>
+        <dd><code>{{ loc.folder or '(project root)' }}</code></dd>
+        {% if loc.function %}<dt>Function</dt><dd><code>{{ loc.function }}()</code></dd>{% endif %}
+        <dt>Full path</dt>
+        <dd><code>{{ loc.goto }}</code> <button type="button" class="copy" data-copy="{{ loc.goto }}">Copy</button></dd>
+      </dl>
+      {% if loc.hint %}<p class="note">{{ loc.hint }}</p>{% endif %}
+      <p class="note">Paste the full path into your editor's "Go to file" (VS Code: Ctrl+P) to jump straight to the line.</p>
     {% elif alert.resource %}
       <p class="where"><code>{{ alert.resource }}</code></p>
     {% else %}

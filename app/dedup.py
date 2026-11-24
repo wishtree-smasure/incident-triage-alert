@@ -1,4 +1,6 @@
-"""De-duplication: the same alert within DEDUP_TTL_MIN minutes reuses the first investigation."""
+"""De-duplication: a repeat of an alert is merged into the first one (its count goes up)
+while that first one is still open (queued / running), or within DEDUP_TTL_MIN minutes.
+Once it is closed, or no longer kept, a repeat starts a new investigation."""
 
 import hashlib
 import time
@@ -11,20 +13,27 @@ def fingerprint(alert: NormalizedAlert) -> str:
     return hashlib.sha256(key.encode()).hexdigest()
 
 
+KEEP_SECONDS = 7 * 24 * 3600  # saved entries older than a week are dropped on startup
+
+
 class DedupCache:
     def __init__(self, ttl_minutes: int, clock=time.time, db=None):
         self.ttl_seconds = ttl_minutes * 60
         self.clock = clock
         self.db = db
         # fingerprint -> {"investigation_id", "first_seen", "count"}
-        self.entries = db.load_dedup(newer_than=clock() - self.ttl_seconds) if db else {}
+        self.entries = db.load_dedup(newer_than=clock() - KEEP_SECONDS) if db else {}
 
-    def check(self, fp: str, new_investigation_id: str) -> tuple[str, int, bool]:
-        """Returns (investigation_id, count, is_duplicate)."""
+    def check(self, fp: str, new_investigation_id: str, state_of=None) -> tuple[str, int, bool]:
+        """Returns (investigation_id, count, is_duplicate).
+        state_of(investigation_id) -> "open" | "closed" | None (no longer kept). Without it,
+        only the time window counts."""
         now = self.clock()
         entry = self.entries.get(fp)
+        state = state_of(entry["investigation_id"]) if entry and state_of else "closed"
+        recent = entry is not None and now - entry["first_seen"] < self.ttl_seconds
 
-        if entry and now - entry["first_seen"] < self.ttl_seconds:
+        if entry and state is not None and (state == "open" or recent):
             entry["count"] += 1
             self._save(fp)
             return entry["investigation_id"], entry["count"], True

@@ -100,12 +100,16 @@ def test_same_title_from_different_sources_is_not_deduplicated(client):
 
 
 def test_dedup_window_comes_from_settings(registry):
-    with make_client(registry, dedup_ttl_min=0) as c:  # 0 minutes = never de-duplicate
-        ids = {
-            post_alert(c, "datadog-prod", load_payload("datadog"), TEST_SECRETS["SRC_DATADOG_SECRET"]).json()["investigation_id"]
-            for _ in range(3)
-        }
-    assert len(ids) == 3
+    """The window applies once an investigation is closed; while it is open, repeats always merge."""
+    def send(c):
+        return post_alert(c, "datadog-prod", load_payload("datadog"), TEST_SECRETS["SRC_DATADOG_SECRET"]).json()
+
+    for ttl, merged in [(0, False), (15, True)]:
+        with make_client(registry, dedup_ttl_min=ttl) as c:
+            first = send(c)
+            assert send(c)["investigation_id"] == first["investigation_id"]  # open: merged
+            c.app.state.store.get(first["investigation_id"]).status = "concluded"
+            assert (send(c)["investigation_id"] == first["investigation_id"]) is merged
 
 
 def test_in_house_alert_can_name_its_application(client):
