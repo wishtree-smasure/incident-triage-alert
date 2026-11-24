@@ -11,6 +11,7 @@ from fastapi.templating import Jinja2Templates
 from pydantic import ValidationError
 
 from app import analysis, dashboard, demo
+from app.db import open_database
 from app.dedup import DedupCache, fingerprint
 from app.models import ApiCallBatch, Investigation
 from app.normalizers import NormalizationError, normalize
@@ -47,10 +48,11 @@ def create_app(registry: Registry | None = None, settings: Settings | None = Non
         app.state.settings = settings or Settings()
         app.state.registry = registry or load_registry(app.state.settings.sources_path)
         app.state.playbook = load_playbook(app.state.settings.playbook_path)
-        app.state.dedup = DedupCache(ttl_minutes=app.state.settings.dedup_ttl_min)
-        app.state.store = InvestigationStore()
-        app.state.traffic = TrafficStore()
-        stop_demo = demo.start(app.state.registry) if app.state.settings.demo_mode else None
+        db = open_database(app.state.settings.database_url, PROJECT_ROOT)
+        app.state.dedup = DedupCache(ttl_minutes=app.state.settings.dedup_ttl_min, db=db)
+        app.state.store = InvestigationStore(db=db)
+        app.state.traffic = TrafficStore(db=db)
+        stop_demo = demo.start(app.state.registry, app.state.store, app.state.traffic) if app.state.settings.demo_mode else None
         yield
         if stop_demo:
             stop_demo.set()
@@ -68,23 +70,34 @@ def create_app(registry: Registry | None = None, settings: Settings | None = Non
         app: str | None = None,
         source: str | None = None,
         level: str | None = None,
+        q: str | None = None,
+        partial: bool = False,
     ):
         state = request.app.state
         view = "analysis" if view == "analysis" else None
         if level not in ("alert", "warning"):
             level = None
         alerts = state.store.newest_first()
-        context = dashboard.build(alerts, state.registry, app, source, level, view)
+        context = dashboard.build(alerts, state.registry, app, source, level, view, q)
+        if partial and view is None:
+            # Just the live part of the Alerts view: the page script swaps it in without a reload.
+            return templates.TemplateResponse(request, "_alerts.html", context)
 
         if view == "analysis":
             by_app = {name: state.traffic.for_app(name) for name in state.traffic.apps()}
             context["traffic_apps"] = list(by_app)
             context["app_rows"] = analysis.overview_of_apps(by_app, alerts)
+            # Applications with alerts but no API calls yet: listed too, so none look missing.
+            context["quiet_apps"] = [
+                {"app": name, "open_alerts": n, "show_stoppers": sev1}
+                for name in sorted({i.service for i in alerts} - set(by_app))
+                for n, sev1 in [analysis.open_alerts(alerts, name)]
+            ]
             context["analysis"] = None
             if app in by_app:
                 context["analysis"] = analysis.analyze_app(app, by_app[app], alerts)
 
-        refresh = 30 if view == "analysis" else 10
+        refresh = 30 if view == "analysis" else None  # the Alerts view updates itself with a script
         return templates.TemplateResponse(request, "index.html", {**context, "refresh": refresh})
 
     @app.get("/investigations/{investigation_id}", response_class=HTMLResponse)
@@ -121,6 +134,7 @@ def create_app(registry: Registry | None = None, settings: Settings | None = Non
             existing = state.store.get(inv_id)
             if existing:
                 existing.dedup_count = count
+                state.store.save(existing)
         else:
             state.store.add(
                 Investigation(

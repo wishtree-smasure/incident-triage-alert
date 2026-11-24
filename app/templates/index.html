@@ -1,110 +1,37 @@
 {% extends "base.html" %}
+{% block head %}{% if view != 'analysis' %}<noscript><meta http-equiv="refresh" content="10"></noscript>{% endif %}{% endblock %}
 {% block content %}
-  <h1>Incident Triage</h1>
+  <header class="top">
+    <h1>Incident Triage</h1>
+    {% if view != 'analysis' %}
+    <div class="live" id="live" hidden>
+      <span class="dot" aria-hidden="true"></span>
+      <span id="live-text">Live</span>
+      <button type="button" id="live-toggle">Pause</button>
+    </div>
+    {% endif %}
+  </header>
   {% if view == 'analysis' %}
   <p class="sub">API traffic, health and optimisation advice per application. Refreshes every 30 seconds.</p>
   {% else %}
-  <p class="sub">Alerts and log errors from every application and monitoring source, highest priority first. Refreshes every 10 seconds.</p>
+  <p class="sub">Alerts and log errors from every application, highest priority first. Click an alert to see where it broke and how to fix it.</p>
   {% endif %}
 
   <nav class="view-tabs">
-    <a href="{{ link(view=None, source=None, level=None) }}" class="{{ 'active' if view != 'analysis' }}">Alerts</a>
-    <a href="{{ link(view='analysis', source=None, level=None) }}" class="{{ 'active' if view == 'analysis' }}">API analysis</a>
+    <a href="{{ link(view=None, source=None, level=None, q=None) }}" class="{{ 'active' if view != 'analysis' }}">Alerts</a>
+    <a href="{{ link(view='analysis', source=None, level=None, q=None) }}" class="{{ 'active' if view == 'analysis' }}">API analysis</a>
   </nav>
-
-  {# ---------------------------------------------------------------- 1. show stoppers #}
-  {% if show_stoppers %}
-  <section class="stoppers">
-    <h2>Show stoppers · {{ show_stoppers|length }} SEV1 incident{{ 's' if show_stoppers|length != 1 }} — act now</h2>
-    {% for inv in show_stoppers %}
-    <div class="stopper">
-      <div class="stopper-title"><a href="/investigations/{{ inv.id }}">{{ inv.alert.title }}</a></div>
-      <div class="stopper-meta">
-        {{ inv.service }} · {{ source_name(inv.source_id) }} · {{ inv.created_at.strftime('%H:%M:%S') }} UTC
-        · seen {{ inv.dedup_count }}×
-        {% if inv.alert.labels.file %} · <code>{{ inv.alert.labels.file }}:{{ inv.alert.labels.line }}</code>{% endif %}
-      </div>
-      <div class="stopper-action">
-        <strong>Immediate action:</strong>
-        {% if inv.suggestion %}{{ inv.suggestion.immediate }}{% else %}No playbook match: page the {{ inv.service }} on-call owner now.{% endif %}
-      </div>
-    </div>
-    {% endfor %}
-  </section>
-  {% endif %}
 
   {% if view == 'analysis' %}
     {% include "_analysis.html" %}
   {% else %}
-
-  {# ---------------------------------------------------------------- 2. applications #}
-  <h2 class="section-title">Applications</h2>
-  <nav class="apps">
-    <a class="app-card {{ 'active' if not app }}" href="{{ link(app=None) }}">
-      <div class="app-name">All applications</div>
-      <div class="app-counts">{{ all_counts.alert }} alerts · {{ all_counts.warning }} warnings</div>
-    </a>
-    {% for a in applications %}
-    <a class="app-card {{ 'active' if app == a.name }} {{ 'has-stopper' if a.counts.stoppers }}" href="{{ link(app=a.name) }}">
-      <div class="app-name">{{ a.name }}</div>
-      <div class="app-counts">
-        {% if a.counts.stoppers %}<span class="stopper-pill">{{ a.counts.stoppers }} show stopper{{ 's' if a.counts.stoppers != 1 }}</span><br>{% endif %}
-        {{ a.counts.alert }} alerts · {{ a.counts.warning }} warnings
-      </div>
-    </a>
-    {% endfor %}
-  </nav>
-
-  {# ---------------------------------------------------------------- 3. sources #}
-  <nav class="tabs">
-    <a href="{{ link(source=None) }}" class="{{ 'active' if not source }}">All sources</a>
-    {% for s in sources %}
-    <a href="{{ link(source=s.id) }}" class="{{ 'active' if source == s.id }}">{{ s.name }} <span class="muted">{{ s.n }}</span></a>
-    {% endfor %}
-  </nav>
-
-  {# ---------------------------------------------------------------- 4. totals (click to filter) #}
-  <section class="tiles">
-    <a class="tile {{ 'active' if not level }}" href="{{ link(level=None) }}"><div class="label">Total</div><div class="value">{{ counts.total }}</div></a>
-    <div class="tile stopper-tile"><div class="label">Show stoppers (SEV1)</div><div class="value">{{ counts.stoppers }}</div></div>
-    <a class="tile alert {{ 'active' if level == 'alert' }}" href="{{ link(level='alert') }}"><div class="label">Alerts</div><div class="value">{{ counts.alert }}</div></a>
-    <a class="tile warning {{ 'active' if level == 'warning' }}" href="{{ link(level='warning') }}"><div class="label">Warnings</div><div class="value">{{ counts.warning }}</div></a>
-    <div class="tile"><div class="label">Duplicates suppressed</div><div class="value">{{ counts.duplicates }}</div></div>
-  </section>
-
-  {# ---------------------------------------------------------------- 5. alerts by priority #}
-  <div class="table-wrap">
-    {% if groups %}
-    <table>
-      <thead>
-        <tr>
-          <th>Received (UTC)</th><th>Application</th><th>Source</th><th>Alert</th>
-          <th>Where</th><th>Suggested fix</th><th>Status</th><th class="num">Repeats</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for group in groups %}
-        <tr class="group-row {{ 'sev1' if group.severity == 'SEV1' }}">
-          <td colspan="8">{{ group.label }} <span class="muted">· {{ group['items']|length }}</span></td>
-        </tr>
-        {% for inv in group['items'] %}
-        <tr>
-          <td>{{ inv.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-          <td>{{ inv.service }}</td>
-          <td class="muted">{{ source_name(inv.source_id) }}</td>
-          <td class="wrap"><span class="badge {{ inv.level }}">{{ inv.severity or '?' }}</span> <a href="/investigations/{{ inv.id }}">{{ inv.alert.title }}</a></td>
-          <td>{% if inv.alert.labels.file %}<code>{{ inv.alert.labels.file }}:{{ inv.alert.labels.line }}</code>{% else %}<span class="muted">—</span>{% endif %}</td>
-          <td class="wrap fix">{% if inv.suggestion %}{{ inv.suggestion.fix|truncate(110) }}{% else %}<span class="muted">No suggestion</span>{% endif %}</td>
-          <td>{{ inv.status }}</td>
-          <td class="num">{{ inv.dedup_count }}</td>
-        </tr>
-        {% endfor %}
-        {% endfor %}
-      </tbody>
-    </table>
-    {% else %}
-    <div class="empty">Nothing here yet for this filter. Alerts arrive at <code>POST /hooks/&lt;source_id&gt;</code>.</div>
-    {% endif %}
+  <form id="filters" class="search" method="get" action="/" role="search">
+    <input type="search" name="q" value="{{ q or '' }}" placeholder="Search alerts, apps, files…  (press / )" autocomplete="off" aria-label="Search alerts">
+    <noscript><button type="submit">Apply</button></noscript>
+  </form>
+  <div id="live-region">
+    {% include "_alerts.html" %}
   </div>
+  <script>{% include "_alerts.js" %}</script>
   {% endif %}
 {% endblock %}

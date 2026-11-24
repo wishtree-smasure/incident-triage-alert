@@ -19,6 +19,13 @@ TEST_SECRETS = {
 }
 
 
+@pytest.fixture(autouse=True)
+def memory_only(monkeypatch):
+    """Tests never touch the real database file: DATABASE_URL empty = memory only.
+    Tests of the database itself pass their own URL."""
+    monkeypatch.setenv("DATABASE_URL", "")
+
+
 def load_payload(name: str) -> dict:
     return json.loads((PAYLOADS / f"{name}.json").read_text())
 

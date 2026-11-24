@@ -21,9 +21,9 @@ def client(registry):
 
 
 def table_titles(page: str) -> list[str]:
-    """Alert titles in the main table, in display order."""
-    table = page.split("<table>", 1)[1]
-    return re.findall(r'<a href="/investigations/[0-9a-f]+">([^<]+)</a>', table)
+    """Alert titles in the alert list, in display order."""
+    alert_list = page.split('id="alert-list"', 1)[1]
+    return re.findall(r'class="item-title">([^<]+)</span>', alert_list)
 
 
 def test_empty_dashboard(registry):
@@ -35,7 +35,7 @@ def test_empty_dashboard(registry):
 
 def test_show_stoppers_on_top_with_immediate_action(client):
     page = client.get("/").text
-    stoppers = page.split("Show stoppers ·", 1)[1].split("Applications", 1)[0]
+    stoppers = page.split("Show stoppers ·", 1)[1].split('class="filter-row"', 1)[0]
     assert "auth-gateway 401/403 rate high" in stoppers
     assert "NullPointerException" in stoppers
     assert "Immediate action:" in stoppers
@@ -45,7 +45,7 @@ def test_show_stoppers_on_top_with_immediate_action(client):
 
 def test_applications_listed(client):
     page = client.get("/").text
-    apps = page.split("Applications", 1)[1].split('class="tabs"', 1)[0]
+    apps = page.split('name="app"', 1)[1].split("</select>", 1)[0]
     for name in ["checkout-api", "orders-service", "auth-gateway", "billing-service", "reporting-service"]:
         assert name in apps
 
@@ -58,7 +58,7 @@ def test_source_tabs_use_display_names(client):
 
 def test_alerts_sorted_by_priority(client):
     page = client.get("/").text
-    labels = re.findall(r'class="group-row[^"]*">\s*<td colspan="8">([^<]+?) <span', page)
+    labels = re.findall(r'<h3 class="group[^"]*">([^<]+?) <span', page)
     assert labels == [
         "SEV1 · Show stopper", "SEV2 · High", "Unrated · needs triage", "SEV3 · Medium", "SEV4 · Low",
     ]
@@ -80,7 +80,8 @@ def test_filter_by_level_keeps_other_filters(client):
     page = client.get("/?app=auth-gateway&level=warning").text
     titles = table_titles(page)
     assert titles and "auth-gateway 401/403 rate high" not in titles
-    assert 'href="/?app=auth-gateway&amp;source=azure-prod&amp;level=warning"' in page
+    assert '<option value="auth-gateway" selected>' in page
+    assert re.search(r'name="level" value="warning" form="filters" checked', page)
 
 
 # ----------------------------------------------------------------------- safety and edge cases
@@ -106,8 +107,8 @@ def test_html_in_alert_is_escaped(registry):
 
 
 def test_unknown_filters_show_empty_state(client):
-    assert "Nothing here yet" in client.get("/?app=no-such-app").text
-    assert "Nothing here yet" in client.get("/?source=no-such-source").text
+    assert "No alerts match these filters" in client.get("/?app=no-such-app").text
+    assert "No alerts match these filters" in client.get("/?source=no-such-source").text
 
 
 def test_invalid_level_is_ignored(client):
@@ -119,18 +120,18 @@ def test_show_stoppers_stay_visible_when_filtering_another_app(client):
     assert "Show stoppers ·" in page and "auth-gateway 401/403 rate high" in page
 
 
-def test_app_names_are_url_encoded_in_links(registry):
+def test_app_names_are_escaped_in_filters(registry):
     with make_client(registry) as c:
         send_generic(c, title="x", service="team a&b")
         page = c.get("/").text
-        assert 'href="/?app=team+a%26b"' in page
+        assert '<option value="team a&amp;b"' in page
         assert table_titles(c.get("/?app=team a&b".replace("&", "%26")).text) == ["x"]
 
 
 def test_counts_follow_the_selected_app(client):
     page = client.get("/?app=orders-service").text
-    tiles = page.split('class="tiles"', 1)[1].split("</section>", 1)[0]
-    assert re.search(r"Total</div><div class=\"value\">2<", tiles)
+    assert "Showing 2 alerts" in page
+    assert re.search(r"<span>All <b>2</b></span>", page)
 
 
 def test_detail_page_shows_ai_verdict_instead_of_playbook(client):
@@ -167,3 +168,23 @@ def test_show_stopper_without_playbook_match_says_page_owner(registry):
     with make_client(registry) as c:
         send_generic(c, title="Mystery outage", severity="SEV1", service="mystery-app")
         assert "page the mystery-app on-call owner" in c.get("/").text
+
+
+def test_search_matches_title_app_and_file(client):
+    assert table_titles(client.get("/?q=401/403").text) == ["auth-gateway 401/403 rate high"]
+    titles = table_titles(client.get("/?q=ORDERS-SERVICE").text)  # case-insensitive, matches the app
+    assert set(titles) >= {"orders-service-p99-latency", "orders-db-connections-max"}
+    assert "No alerts match these filters" in client.get("/?q=zzz-nothing").text
+
+
+def test_partial_returns_only_the_live_part(client):
+    page = client.get("/?app=auth-gateway&partial=1").text
+    assert page.lstrip().startswith("<div id=\"alerts-live\"")
+    assert "<html" not in page and "Show stoppers ·" in page
+    assert table_titles(page) and all("auth-gateway" in t for t in table_titles(page))
+
+
+def test_alerts_view_updates_itself_without_meta_refresh(client):
+    page = client.get("/").text
+    assert 'id="live-region"' in page and "refresh(false)" in page
+    assert '<noscript><meta http-equiv="refresh" content="10"></noscript>' in page

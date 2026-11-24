@@ -221,3 +221,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Local database (DATABASE_URL=sqlite:///data/triage.db)
+data/

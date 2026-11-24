@@ -20,6 +20,12 @@
     <div class="app-counts">{{ health_badge(row.health) }} · {{ '{:,}'.format(row.calls) }} calls</div>
   </a>
   {% endfor %}
+  {% for row in quiet_apps %}
+  <a class="app-card {{ 'active' if app == row.app }}" href="{{ link(app=row.app) }}">
+    <div class="app-name">{{ row.app }}</div>
+    <div class="app-counts">No API data yet</div>
+  </a>
+  {% endfor %}
 </nav>
 
 {% if not traffic_apps %}
@@ -54,6 +60,13 @@
           <td class="num">{{ row.open_alerts }}{% if row.show_stoppers %} <span class="stopper-pill">({{ row.show_stoppers }} SEV1)</span>{% endif %}</td>
         </tr>
         {% endfor %}
+        {% for row in quiet_apps %}
+        <tr>
+          <td><a href="{{ link(app=row.app) }}">{{ row.app }}</a></td>
+          <td colspan="8" class="muted">No API data yet: this application has alerts but has not sent any access logs.</td>
+          <td class="num">{{ row.open_alerts }}{% if row.show_stoppers %} <span class="stopper-pill">({{ row.show_stoppers }} SEV1)</span>{% endif %}</td>
+        </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>
@@ -61,7 +74,8 @@
     <strong>degraded</strong> if 1%+ server errors, p95 ≥ 800 ms, or 10%+ client errors on an API.</p>
 
 {% elif not analysis %}
-  <div class="card empty">No API traffic recorded for <strong>{{ app }}</strong>.</div>
+  <div class="card empty">No API traffic recorded for <strong>{{ app }}</strong> yet.
+    API calls arrive at <code>POST /requests/&lt;source_id&gt;</code> (the log watcher sends them from access logs).</div>
 
 {% else %}
 {# ---------------------------------------------------------------- one application #}

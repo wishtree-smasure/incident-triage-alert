@@ -76,6 +76,34 @@ APPS = {
             ("GET", "/health", 0.10, 5, 0.0, 0.0),
         ],
     },
+    "billing-service": {
+        "calls_per_day": 6_000,
+        "apis": [
+            ("GET", "/invoices/{id}", 0.35, 180, 0.003, 0.02),
+            ("POST", "/invoices", 0.15, 400, 0.01, 0.02),
+            ("POST", "/reconciliation/run", 0.05, 4200, 0.06, 0.0, 3),  # nightly job at 03:00 that crashes
+            ("GET", "/plans", 0.30, 35, 0.0, 0.0),                 # same for everyone: cache it
+            ("GET", "/health", 0.15, 5, 0.0, 0.0),
+        ],
+    },
+    "notification-service": {
+        "calls_per_day": 9_000,
+        "apis": [
+            ("POST", "/emails", 0.45, 650, 0.015, 0.01),           # queue backlog: slow at peak
+            ("POST", "/sms", 0.15, 300, 0.005, 0.02),
+            ("GET", "/templates/{id}", 0.25, 25, 0.0, 0.01),
+            ("GET", "/health", 0.15, 5, 0.0, 0.0),
+        ],
+    },
+    "reporting-service": {
+        "calls_per_day": 2_500,
+        "apis": [
+            ("GET", "/reports/{id}", 0.40, 1200, 0.004, 0.02),     # heavy queries
+            ("POST", "/reports/export", 0.15, 3500, 0.01, 0.01, 6),  # export batch at 06:00
+            ("GET", "/dashboards", 0.30, 220, 0.0, 0.0),
+            ("GET", "/health", 0.15, 5, 0.0, 0.0),
+        ],
+    },
 }
 
 

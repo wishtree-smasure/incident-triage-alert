@@ -1,5 +1,6 @@
 """Builds what the dashboard shows: show stoppers, applications, source tabs and
-alerts grouped by priority. Filters: ?view=analysis&app=<service>&source=<source_id>&level=alert|warning
+alerts grouped by priority.
+Filters: ?view=analysis&app=<service>&source=<source_id>&level=alert|warning&q=<search text>
 """
 
 from urllib.parse import urlencode
@@ -33,6 +34,13 @@ def count(investigations: list[Investigation]) -> dict:
     }
 
 
+def matches(inv: Investigation, q: str) -> bool:
+    """Search: case-insensitive text match on title, application, where it broke and the description."""
+    a = inv.alert
+    text = " ".join(str(x) for x in (a.title, inv.service, a.resource, a.description) if x)
+    return q.lower() in text.lower()
+
+
 def build(
     everything: list[Investigation],
     registry: Registry,
@@ -40,6 +48,7 @@ def build(
     source: str | None,
     level: str | None,
     view: str | None = None,
+    q: str | None = None,
 ) -> dict:
     # Show stoppers are always shown, whatever filter is selected.
     show_stoppers = sorted((i for i in everything if i.severity == "SEV1"), key=by_priority)
@@ -60,7 +69,9 @@ def build(
     ]
 
     in_source = [i for i in in_app if source is None or i.source_id == source]
-    shown = [i for i in in_source if level is None or i.level == level]
+    q = (q or "").strip() or None
+    matching = [i for i in in_source if q is None or matches(i, q)]
+    shown = [i for i in matching if level is None or i.level == level]
 
     groups = []
     for severity, label in PRIORITIES:
@@ -69,7 +80,7 @@ def build(
             groups.append({"severity": severity, "label": label, "items": items})
 
     def link(**changes) -> str:
-        params = {"view": view, "app": app, "source": source, "level": level, **changes}
+        params = {"view": view, "app": app, "source": source, "level": level, "q": q, **changes}
         query = urlencode({k: v for k, v in params.items() if v})
         return f"/?{query}" if query else "/"
 
@@ -78,8 +89,11 @@ def build(
         "applications": applications,
         "all_counts": count(everything),
         "sources": sources,
-        "counts": count(in_source),
+        "counts": count(matching),
+        "shown": len(shown),
         "groups": groups,
+        "q": q,
+        "filtered": any((app, source, level, q)),
         "app": app,
         "source": source,
         "level": level,
