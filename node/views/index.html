@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block head %}{% if view != 'analysis' %}<noscript><meta http-equiv="refresh" content="10"></noscript>{% endif %}{% endblock %}
+{% block content %}
+  <header class="top">
+    <h1>Incident Triage</h1>
+    {% if view != 'analysis' %}
+    <div class="live" id="live" hidden>
+      <span class="dot" aria-hidden="true"></span>
+      <span id="live-text">Live</span>
+      <button type="button" id="live-toggle">Pause</button>
+    </div>
+    {% endif %}
+  </header>
+  {% if view == 'analysis' %}
+  <p class="sub">API traffic, health and optimisation advice per application. Refreshes every 30 seconds.</p>
+  {% else %}
+  <p class="sub">Alerts and log errors from every application, highest priority first. Click an alert to see where it broke and how to fix it.</p>
+  {% endif %}
+
+  <nav class="view-tabs">
+    <a href="{{ link(view=none, source=none, level=none, q=none) }}" class="{{ 'active' if view != 'analysis' }}">Alerts</a>
+    <a href="{{ link(view='analysis', source=none, level=none, q=none) }}" class="{{ 'active' if view == 'analysis' }}">API analysis</a>
+  </nav>
+
+  {% if view == 'analysis' %}
+    {% include "_analysis.html" %}
+  {% else %}
+  <form id="filters" class="search" method="get" action="/" role="search">
+    <input type="search" name="q" value="{{ q or '' }}" placeholder="Search alerts, apps, files…  (press / )" autocomplete="off" aria-label="Search alerts">
+    <noscript><button type="submit">Apply</button></noscript>
+  </form>
+  <div id="live-region">
+    {% include "_alerts.html" %}
+  </div>
+  <script>{% include "_alerts.js" %}</script>
+  {% endif %}
+{% endblock %}

@@ -7,7 +7,8 @@ It has three real bugs on purpose, so the log fills up with real Python errors:
 It also logs a warning when an order is slow, and one access-log line per API call
 (e.g. "GET /products 200 42ms") for the API analysis tab.
 
-Run:  python sample_app/shop.py          (writes sample_app/logs/shop.log, Ctrl+C to stop)
+Run:  python sample_app/shop.py                  (writes sample_app/logs/shop.log, Ctrl+C to stop)
+      python sample_app/shop.py --log FILE      (writes FILE; the Node.js app's demo mode uses this)
 """
 
 import logging
@@ -95,13 +96,19 @@ def serve_customer(order_id: int) -> None:
 
 
 def main() -> None:
-    setup_logging()
-    print(f"Shop running, writing logs to {LOG_FILE} (Ctrl+C to stop)")
+    import argparse
+
+    parser = argparse.ArgumentParser(description="A tiny fake shop that writes a log with real errors.")
+    parser.add_argument("--log", type=Path, default=LOG_FILE, help="log file to write")
+    parser.add_argument("--every", type=float, default=1.0, help="seconds between customers")
+    args = parser.parse_args()
+    setup_logging(args.log)
+    print(f"Shop running, writing logs to {args.log} (Ctrl+C to stop)", flush=True)
     order_id = 1000
     while True:
         order_id += 1
         serve_customer(order_id)
-        time.sleep(1)
+        time.sleep(args.every)
 
 
 if __name__ == "__main__":

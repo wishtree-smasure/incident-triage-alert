@@ -1,0 +1,558 @@
+[
+ {
+  "alert": {
+   "description": "5xx error rate is 12.4% (threshold 5%) for service:checkout-api env:prod",
+   "fired_at": "2026-11-19T10:00:00Z",
+   "labels": {
+    "env": "prod",
+    "service": "checkout-api",
+    "team": "payments"
+   },
+   "resource": "service:checkout-api,env:prod",
+   "service": "checkout-api",
+   "severity_hint": "SEV2",
+   "source_id": "datadog-prod",
+   "source_type": "datadog",
+   "title": "[Triggered on {service:checkout-api}] checkout-api 5xx rate above 5%"
+  },
+  "code_location": null,
+  "fingerprint": "0932549d88048b3a0dc3261dc9e9ecdbec99f35c73544f7674891e3213f270a7",
+  "name": "payload:datadog",
+  "payload": {
+   "alert_id": "148201",
+   "alert_metric": "trace.http.request.errors",
+   "alert_scope": "service:checkout-api,env:prod",
+   "alert_transition": "Triggered",
+   "alert_type": "error",
+   "body": "5xx error rate is 12.4% (threshold 5%) for service:checkout-api env:prod",
+   "date": "1795082400000",
+   "hostname": "",
+   "id": "7380000000000000001",
+   "link": "https://app.datadoghq.com/monitors/148201",
+   "priority": "P2",
+   "tags": "service:checkout-api,env:prod,team:payments",
+   "title": "[Triggered on {service:checkout-api}] checkout-api 5xx rate above 5%"
+  },
+  "source_id": "datadog-prod",
+  "suggestion": {
+   "cause": "The service is returning server errors. Most often caused by a recent deploy or a failing dependency.",
+   "fix": "Check what changed in the last hour. If a deploy lines up with the spike, roll it back. Otherwise check the top errors and the health of downstream dependencies.",
+   "immediate": "If a deploy happened in the last hour, roll it back. Otherwise fail over or scale out and page the owning team."
+  }
+ },
+ {
+  "alert": {
+   "description": "Threshold Crossed: 3 datapoints [4.1, 3.8, 4.4] were greater than the threshold (2.0).",
+   "fired_at": "2026-11-19T10:00:00Z",
+   "labels": {
+    "metric_name": "TargetResponseTime",
+    "region": "US East (N. Virginia)"
+   },
+   "resource": "LoadBalancer=app/orders-alb/50dc6c495c0c9188",
+   "service": "orders-service",
+   "severity_hint": null,
+   "source_id": "cloudwatch-prod",
+   "source_type": "cloudwatch",
+   "title": "orders-service-p99-latency"
+  },
+  "code_location": null,
+  "fingerprint": "67cb519cff7fefd004d385668b1f2e4e1a9075ac5b9ebf9291152068834139c8",
+  "name": "payload:cloudwatch_sns",
+  "payload": {
+   "Message": "{\"AlarmName\":\"orders-service-p99-latency\",\"AlarmDescription\":\"p99 latency above 2s for orders-service\",\"AWSAccountId\":\"123456789012\",\"NewStateValue\":\"ALARM\",\"NewStateReason\":\"Threshold Crossed: 3 datapoints [4.1, 3.8, 4.4] were greater than the threshold (2.0).\",\"StateChangeTime\":\"2026-11-19T10:00:00.000+0000\",\"Region\":\"US East (N. Virginia)\",\"AlarmArn\":\"arn:aws:cloudwatch:us-east-1:123456789012:alarm:orders-service-p99-latency\",\"OldStateValue\":\"OK\",\"Trigger\":{\"MetricName\":\"TargetResponseTime\",\"Namespace\":\"AWS/ApplicationELB\",\"Statistic\":\"p99\",\"Dimensions\":[{\"value\":\"app/orders-alb/50dc6c495c0c9188\",\"name\":\"LoadBalancer\"}],\"Period\":60,\"EvaluationPeriods\":3,\"ComparisonOperator\":\"GreaterThanThreshold\",\"Threshold\":2.0}}",
+   "MessageId": "4b6f3c1e-1b1a-5c3e-9a43-2a8d1f0c7e11",
+   "SignatureVersion": "1",
+   "Subject": "ALARM: \"orders-service-p99-latency\" in US East (N. Virginia)",
+   "Timestamp": "2026-11-19T10:00:01.123Z",
+   "TopicArn": "arn:aws:sns:us-east-1:123456789012:orders-alarms",
+   "Type": "Notification"
+  },
+  "source_id": "cloudwatch-prod",
+  "suggestion": {
+   "cause": "Requests are getting slower, usually from database pressure, a slow dependency, or too little capacity.",
+   "fix": "Compare latency with database connections, CPU and dependency timings to find the bottleneck, then scale or fix that part.",
+   "immediate": "Scale out the service and check database connections and CPU."
+  }
+ },
+ {
+  "alert": {
+   "description": "Share of 401/403 responses exceeded 20% over 5 minutes",
+   "fired_at": "2026-11-19T09:30:12.345000Z",
+   "labels": {
+    "monitor_condition": "Fired",
+    "signal_type": "Log"
+   },
+   "resource": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-identity/providers/microsoft.insights/components/auth-gateway",
+   "service": "auth-gateway",
+   "severity_hint": "SEV2",
+   "source_id": "azure-prod",
+   "source_type": "azure_monitor",
+   "title": "auth-gateway 401/403 rate high"
+  },
+  "code_location": null,
+  "fingerprint": "8e2b00fc356b9f5e779a15e106f47f76e387d0c4e3d38dd9bb3934324fc1a8e3",
+  "name": "payload:azure_monitor",
+  "payload": {
+   "data": {
+    "alertContext": {},
+    "customProperties": {
+     "env": "prod"
+    },
+    "essentials": {
+     "alertContextVersion": "1.0",
+     "alertId": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.AlertsManagement/alerts/1b2c3d4e",
+     "alertRule": "auth-gateway 401/403 rate high",
+     "alertTargetIDs": [
+      "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg-identity/providers/microsoft.insights/components/auth-gateway"
+     ],
+     "description": "Share of 401/403 responses exceeded 20% over 5 minutes",
+     "essentialsVersion": "1.0",
+     "firedDateTime": "2026-11-19T09:30:12.345Z",
+     "monitorCondition": "Fired",
+     "monitoringService": "Application Insights",
+     "originAlertId": "1b2c3d4e",
+     "severity": "Sev1",
+     "signalType": "Log"
+    }
+   },
+   "schemaId": "azureMonitorCommonAlertSchema"
+  },
+  "source_id": "azure-prod",
+  "suggestion": {
+   "cause": "Requests are rejected as unauthorized, often after a permission, role or credential change.",
+   "fix": "Check the audit log for recent role assignment or identity changes and restore the missing permission. Protect critical role assignments with a resource lock or PIM approval.",
+   "immediate": "Restore the removed role assignment / permission on the service's identity (check the audit log for who removed it)."
+  }
+ },
+ {
+  "alert": {
+   "description": "nightly-invoice job failed 3 times in a row",
+   "fired_at": "2026-11-19T08:00:00Z",
+   "labels": {
+    "env": "prod",
+    "region": "eu-west-1"
+   },
+   "resource": "job/nightly-invoice",
+   "service": "inhouse-app",
+   "severity_hint": "SEV2",
+   "source_id": "inhouse-app",
+   "source_type": "generic",
+   "title": "Invoice job failures"
+  },
+  "code_location": null,
+  "fingerprint": "f7043a3c43f1e2befa61ce6f342e6ad0742666a562c1ebe31d147a9ecc3168c0",
+  "name": "payload:generic",
+  "payload": {
+   "description": "nightly-invoice job failed 3 times in a row",
+   "fired_at": "2026-11-19T08:00:00Z",
+   "labels": {
+    "env": "prod",
+    "region": "eu-west-1"
+   },
+   "resource": "job/nightly-invoice",
+   "severity": "SEV2",
+   "title": "Invoice job failures"
+  },
+  "source_id": "inhouse-app",
+  "suggestion": null
+ },
+ {
+  "alert": {
+   "description": "5xx error rate is 12.4% (threshold 5%) for service:checkout-api env:prod",
+   "fired_at": "2026-11-25T10:00:00Z",
+   "labels": {
+    "env": "prod",
+    "service": "checkout-api",
+    "team": "payments"
+   },
+   "resource": "service:checkout-api,env:prod",
+   "service": "checkout-api",
+   "severity_hint": "SEV2",
+   "source_id": "datadog-prod",
+   "source_type": "datadog",
+   "title": "[Triggered] checkout-api 5xx rate above 5%"
+  },
+  "code_location": null,
+  "fingerprint": "a0d623d98b6972ef86ab618f0b718c99ecbda14e67c9ffc429f3edfb18dac706",
+  "name": "sample:0:INCIDENT - bad deploy: 5xx spike on checkout after v2.14.0",
+  "payload": {
+   "alert_scope": "service:checkout-api,env:prod",
+   "body": "5xx error rate is 12.4% (threshold 5%) for service:checkout-api env:prod",
+   "date": "1795600800000",
+   "priority": "P2",
+   "tags": "service:checkout-api,env:prod,team:payments",
+   "title": "[Triggered] checkout-api 5xx rate above 5%"
+  },
+  "source_id": "datadog-prod",
+  "suggestion": {
+   "cause": "The service is returning server errors. Most often caused by a recent deploy or a failing dependency.",
+   "fix": "Check what changed in the last hour. If a deploy lines up with the spike, roll it back. Otherwise check the top errors and the health of downstream dependencies.",
+   "immediate": "If a deploy happened in the last hour, roll it back. Otherwise fail over or scale out and page the owning team."
+  }
+ },
+ {
+  "alert": {
+   "description": "412 errors in 10 min: NullPointerException at com.shop.payment.PaymentClient.authorize(PaymentClient.java:88)",
+   "fired_at": "2026-11-25T10:01:00Z",
+   "labels": {
+    "env": "prod",
+    "error.type": "NullPointerException",
+    "service": "checkout-api"
+   },
+   "resource": "service:checkout-api,env:prod,resource:POST /checkout",
+   "service": "checkout-api",
+   "severity_hint": "SEV1",
+   "source_id": "datadog-prod",
+   "source_type": "datadog",
+   "title": "[Triggered] checkout-api java.lang.NullPointerException in PaymentClient.authorize"
+  },
+  "code_location": {
+   "column": null,
+   "file": "PaymentClient.java",
+   "folder": "com/shop/payment/",
+   "function": "PaymentClient.authorize",
+   "goto": "com/shop/payment/PaymentClient.java:88",
+   "hint": "Java package folder; in the repository usually under src/main/java/ (or src/main/kotlin/).",
+   "language": "Java",
+   "line": 88,
+   "path": "com/shop/payment/PaymentClient.java"
+  },
+  "fingerprint": "a27a3a82fd8bf83a28c54fdf0f6c736d402a2493f14b0bf6b6c9c7ffac30eea2",
+  "name": "sample:1:INCIDENT - NullPointerException errors in the new payment code path",
+  "payload": {
+   "alert_scope": "service:checkout-api,env:prod,resource:POST /checkout",
+   "body": "412 errors in 10 min: NullPointerException at com.shop.payment.PaymentClient.authorize(PaymentClient.java:88)",
+   "date": "1795600860000",
+   "priority": "P1",
+   "tags": "service:checkout-api,env:prod,error.type:NullPointerException",
+   "title": "[Triggered] checkout-api java.lang.NullPointerException in PaymentClient.authorize"
+  },
+  "source_id": "datadog-prod",
+  "suggestion": {
+   "cause": "New code dereferences an object that can be null.",
+   "fix": "Add a null check and a test for the failing path, then redeploy.",
+   "immediate": "Roll back to the previous version now (e.g. v2.14.0 -> v2.13.x)."
+  }
+ },
+ {
+  "alert": {
+   "description": "Threshold Crossed: 3 datapoints [4.1, 3.8, 4.4] were greater than the threshold (2.0).",
+   "fired_at": "2026-11-20T06:05:00Z",
+   "labels": {
+    "metric_name": "TargetResponseTime",
+    "region": "US East (N. Virginia)"
+   },
+   "resource": "LoadBalancer=app/orders-alb/50dc6c495c0c9188",
+   "service": "orders-service",
+   "severity_hint": null,
+   "source_id": "cloudwatch-prod",
+   "source_type": "cloudwatch",
+   "title": "orders-service-p99-latency"
+  },
+  "code_location": null,
+  "fingerprint": "67cb519cff7fefd004d385668b1f2e4e1a9075ac5b9ebf9291152068834139c8",
+  "name": "sample:2:INCIDENT - database connection pool exhausted (CloudWatch has no severity, so it counts as an alert)",
+  "payload": {
+   "Message": "{\"AlarmName\": \"orders-service-p99-latency\", \"NewStateValue\": \"ALARM\", \"NewStateReason\": \"Threshold Crossed: 3 datapoints [4.1, 3.8, 4.4] were greater than the threshold (2.0).\", \"StateChangeTime\": \"2026-11-20T06:05:00.000+0000\", \"Region\": \"US East (N. Virginia)\", \"AlarmArn\": \"arn:aws:cloudwatch:us-east-1:123456789012:alarm:orders-service-p99-latency\", \"Trigger\": {\"MetricName\": \"TargetResponseTime\", \"Dimensions\": [{\"name\": \"LoadBalancer\", \"value\": \"app/orders-alb/50dc6c495c0c9188\"}]}}",
+   "Subject": "ALARM: \"orders-service-p99-latency\"",
+   "Type": "Notification"
+  },
+  "source_id": "cloudwatch-prod",
+  "suggestion": {
+   "cause": "Requests are getting slower, usually from database pressure, a slow dependency, or too little capacity.",
+   "fix": "Compare latency with database connections, CPU and dependency timings to find the bottleneck, then scale or fix that part.",
+   "immediate": "Scale out the service and check database connections and CPU."
+  }
+ },
+ {
+  "alert": {
+   "description": "Threshold Crossed: 1 datapoint [200.0] was greater than or equal to the threshold (190.0).",
+   "fired_at": "2026-11-20T06:04:00Z",
+   "labels": {
+    "metric_name": "DatabaseConnections",
+    "region": "US East (N. Virginia)"
+   },
+   "resource": "DBInstanceIdentifier=orders-db",
+   "service": "orders-service",
+   "severity_hint": null,
+   "source_id": "cloudwatch-prod",
+   "source_type": "cloudwatch",
+   "title": "orders-db-connections-max"
+  },
+  "code_location": null,
+  "fingerprint": "ae9bef706c2422ce4b6de11539153e94249777e50f10fa31c0ad114292c53815",
+  "name": "sample:3:INCIDENT - RDS connections at max",
+  "payload": {
+   "Message": "{\"AlarmName\": \"orders-db-connections-max\", \"NewStateValue\": \"ALARM\", \"NewStateReason\": \"Threshold Crossed: 1 datapoint [200.0] was greater than or equal to the threshold (190.0).\", \"StateChangeTime\": \"2026-11-20T06:04:00.000+0000\", \"Region\": \"US East (N. Virginia)\", \"AlarmArn\": \"arn:aws:cloudwatch:us-east-1:123456789012:alarm:orders-db-connections-max\", \"Trigger\": {\"MetricName\": \"DatabaseConnections\", \"Dimensions\": [{\"name\": \"DBInstanceIdentifier\", \"value\": \"orders-db\"}]}}",
+   "Subject": "ALARM: \"orders-db-connections-max\"",
+   "Type": "Notification"
+  },
+  "source_id": "cloudwatch-prod",
+  "suggestion": {
+   "cause": "All database connections are in use, so new requests wait and then time out.",
+   "fix": "Find connections that are not released (missing close / context manager), then raise the pool size or the database max_connections if load really grew. Add a timeout and retry when getting a connection.",
+   "immediate": "Restart the affected service instances to release stuck connections, and temporarily raise the pool size / max_connections."
+  }
+ },
+ {
+  "alert": {
+   "description": "Share of 401/403 responses exceeded 20% over 5 minutes",
+   "fired_at": "2026-11-20T06:10:12Z",
+   "labels": {
+    "monitor_condition": "Fired",
+    "signal_type": "Log"
+   },
+   "resource": "/subscriptions/0000/resourcegroups/rg-identity/providers/microsoft.insights/components/auth-gateway",
+   "service": "auth-gateway",
+   "severity_hint": "SEV1",
+   "source_id": "azure-prod",
+   "source_type": "azure_monitor",
+   "title": "auth-gateway 401/403 rate high"
+  },
+  "code_location": null,
+  "fingerprint": "703874c42be8bc7df8a2c1aa28a28d7cabdc34ce041b2c5e1826dc74e47e228b",
+  "name": "sample:4:INCIDENT - SEV1: auth failures after a role assignment was removed",
+  "payload": {
+   "data": {
+    "essentials": {
+     "alertRule": "auth-gateway 401/403 rate high",
+     "alertTargetIDs": [
+      "/subscriptions/0000/resourcegroups/rg-identity/providers/microsoft.insights/components/auth-gateway"
+     ],
+     "description": "Share of 401/403 responses exceeded 20% over 5 minutes",
+     "firedDateTime": "2026-11-20T06:10:12Z",
+     "monitorCondition": "Fired",
+     "severity": "Sev0",
+     "signalType": "Log"
+    }
+   },
+   "schemaId": "azureMonitorCommonAlertSchema"
+  },
+  "source_id": "azure-prod",
+  "suggestion": {
+   "cause": "Requests are rejected as unauthorized, often after a permission, role or credential change.",
+   "fix": "Check the audit log for recent role assignment or identity changes and restore the missing permission. Protect critical role assignments with a resource lock or PIM approval.",
+   "immediate": "Restore the removed role assignment / permission on the service's identity (check the audit log for who removed it)."
+  }
+ },
+ {
+  "alert": {
+   "description": "reconcile-payments exited with code 137 (OOMKilled) three times in a row",
+   "fired_at": "2026-11-20T05:58:00Z",
+   "labels": {
+    "env": "prod"
+   },
+   "resource": "job/reconcile-payments",
+   "service": "billing-service",
+   "severity_hint": "SEV2",
+   "source_id": "inhouse-app",
+   "source_type": "generic",
+   "title": "Payment reconciliation job crashed"
+  },
+  "code_location": null,
+  "fingerprint": "2171dc85f2280e8b16d4e74291a40df509f1ee3966f21e8b7cf5dbe79e74a56f",
+  "name": "sample:5:INCIDENT - in-house job crashed",
+  "payload": {
+   "description": "reconcile-payments exited with code 137 (OOMKilled) three times in a row",
+   "fired_at": "2026-11-20T05:58:00Z",
+   "labels": {
+    "env": "prod"
+   },
+   "resource": "job/reconcile-payments",
+   "service": "billing-service",
+   "severity": "SEV2",
+   "title": "Payment reconciliation job crashed"
+  },
+  "source_id": "inhouse-app",
+  "suggestion": {
+   "cause": "The process uses more memory than its limit and is killed.",
+   "fix": "Check for a memory leak or a too-large batch, process data in smaller chunks, or raise the memory limit permanently.",
+   "immediate": "Raise the memory limit and re-run the job."
+  }
+ },
+ {
+  "alert": {
+   "description": "p95 latency is 910ms (warning threshold 800ms)",
+   "fired_at": "2026-11-25T09:55:00Z",
+   "labels": {
+    "env": "prod",
+    "service": "checkout-api"
+   },
+   "resource": "service:checkout-api,env:prod",
+   "service": "checkout-api",
+   "severity_hint": "SEV3",
+   "source_id": "datadog-prod",
+   "source_type": "datadog",
+   "title": "[Warn] checkout-api p95 latency above 800ms"
+  },
+  "code_location": null,
+  "fingerprint": "8c009b569a1d2d85c069a939881440079002e74e42c0404dc3008d2a4673e7b0",
+  "name": "sample:6:WARNING - latency creeping up",
+  "payload": {
+   "alert_scope": "service:checkout-api,env:prod",
+   "body": "p95 latency is 910ms (warning threshold 800ms)",
+   "date": "1795600500000",
+   "priority": "P3",
+   "tags": "service:checkout-api,env:prod",
+   "title": "[Warn] checkout-api p95 latency above 800ms"
+  },
+  "source_id": "datadog-prod",
+  "suggestion": {
+   "cause": "Requests are getting slower, usually from database pressure, a slow dependency, or too little capacity.",
+   "fix": "Compare latency with database connections, CPU and dependency timings to find the bottleneck, then scale or fix that part.",
+   "immediate": "Scale out the service and check database connections and CPU."
+  }
+ },
+ {
+  "alert": {
+   "description": "Dependency call failure rate to graph.microsoft.com is 4% (threshold 2%)",
+   "fired_at": "2026-11-20T05:50:00Z",
+   "labels": {
+    "monitor_condition": "Fired",
+    "signal_type": "Metric"
+   },
+   "resource": "/subscriptions/0000/resourcegroups/rg-identity/providers/microsoft.insights/components/auth-gateway",
+   "service": "auth-gateway",
+   "severity_hint": "SEV3",
+   "source_id": "azure-prod",
+   "source_type": "azure_monitor",
+   "title": "auth-gateway Microsoft Graph dependency failures"
+  },
+  "code_location": null,
+  "fingerprint": "fd7eceb135c8fd73f2eb05ac4d590653400fb0b61893abbe2e8969ccb5648572",
+  "name": "sample:7:WARNING - downstream dependency errors",
+  "payload": {
+   "data": {
+    "essentials": {
+     "alertRule": "auth-gateway Microsoft Graph dependency failures",
+     "alertTargetIDs": [
+      "/subscriptions/0000/resourcegroups/rg-identity/providers/microsoft.insights/components/auth-gateway"
+     ],
+     "description": "Dependency call failure rate to graph.microsoft.com is 4% (threshold 2%)",
+     "firedDateTime": "2026-11-20T05:50:00Z",
+     "monitorCondition": "Fired",
+     "severity": "Sev2",
+     "signalType": "Metric"
+    }
+   },
+   "schemaId": "azureMonitorCommonAlertSchema"
+  },
+  "source_id": "azure-prod",
+  "suggestion": {
+   "cause": "Calls to an external service are failing.",
+   "fix": "Add retries with backoff and a circuit breaker so failures don't cascade.",
+   "immediate": "Turn on the fallback / degraded mode for that dependency and check its status page."
+  }
+ },
+ {
+  "alert": {
+   "description": "Token cache miss rate is 35% (threshold 25%)",
+   "fired_at": "2026-11-20T05:45:00Z",
+   "labels": {
+    "monitor_condition": "Fired",
+    "signal_type": "Metric"
+   },
+   "resource": "/subscriptions/0000/resourcegroups/rg-identity/providers/microsoft.insights/components/auth-gateway",
+   "service": "auth-gateway",
+   "severity_hint": "SEV4",
+   "source_id": "azure-prod",
+   "source_type": "azure_monitor",
+   "title": "auth-gateway token cache miss rate high"
+  },
+  "code_location": null,
+  "fingerprint": "6ad82a8d242bfb785a26e19324079a800f87411ff3aca77dd278bff372c51101",
+  "name": "sample:8:WARNING - token cache misses",
+  "payload": {
+   "data": {
+    "essentials": {
+     "alertRule": "auth-gateway token cache miss rate high",
+     "alertTargetIDs": [
+      "/subscriptions/0000/resourcegroups/rg-identity/providers/microsoft.insights/components/auth-gateway"
+     ],
+     "description": "Token cache miss rate is 35% (threshold 25%)",
+     "firedDateTime": "2026-11-20T05:45:00Z",
+     "monitorCondition": "Fired",
+     "severity": "Sev3",
+     "signalType": "Metric"
+    }
+   },
+   "schemaId": "azureMonitorCommonAlertSchema"
+  },
+  "source_id": "azure-prod",
+  "suggestion": {
+   "cause": "The cache is being missed often, e.g. after a restart, an eviction storm, or a key change.",
+   "fix": "Check if the cache was recently restarted or its size reduced, and warm it up or increase its memory.",
+   "immediate": "Warm the cache and check that the cache service is healthy."
+  }
+ },
+ {
+  "alert": {
+   "description": "notifications queue depth 18,400 and rising for 20 minutes",
+   "fired_at": "2026-11-20T05:40:00Z",
+   "labels": {
+    "env": "prod"
+   },
+   "resource": "queue/notifications",
+   "service": "notification-service",
+   "severity_hint": "SEV3",
+   "source_id": "inhouse-app",
+   "source_type": "generic",
+   "title": "Email queue backlog growing"
+  },
+  "code_location": null,
+  "fingerprint": "9cf22e44688287a34db58ed21c907013c8fb7cbb27246f5270bd5214aaa5c3cd",
+  "name": "sample:9:WARNING - queue backlog",
+  "payload": {
+   "description": "notifications queue depth 18,400 and rising for 20 minutes",
+   "fired_at": "2026-11-20T05:40:00Z",
+   "labels": {
+    "env": "prod"
+   },
+   "resource": "queue/notifications",
+   "service": "notification-service",
+   "severity": "SEV3",
+   "title": "Email queue backlog growing"
+  },
+  "source_id": "inhouse-app",
+  "suggestion": {
+   "cause": "Messages arrive faster than the consumers process them.",
+   "fix": "Check that consumers are running and healthy, then fix the slow step in processing.",
+   "immediate": "Add more consumers / restart stuck consumers."
+  }
+ },
+ {
+  "alert": {
+   "description": "/var/lib/reports is 87% full",
+   "fired_at": "2026-11-20T05:30:00Z",
+   "labels": {
+    "env": "prod"
+   },
+   "resource": "host/report-worker-2",
+   "service": "reporting-service",
+   "severity_hint": "SEV4",
+   "source_id": "inhouse-app",
+   "source_type": "generic",
+   "title": "Disk usage above 85% on report-worker"
+  },
+  "code_location": null,
+  "fingerprint": "22f7d5e0a9bf9d9964a3e2fe4127842e0b77b90d344bbacc7c06426b20d3283f",
+  "name": "sample:10:WARNING - disk usage",
+  "payload": {
+   "description": "/var/lib/reports is 87% full",
+   "fired_at": "2026-11-20T05:30:00Z",
+   "labels": {
+    "env": "prod"
+   },
+   "resource": "host/report-worker-2",
+   "service": "reporting-service",
+   "severity": "SEV4",
+   "title": "Disk usage above 85% on report-worker"
+  },
+  "source_id": "inhouse-app",
+  "suggestion": {
+   "cause": "The disk is filling up, often from logs or old files that are never cleaned.",
+   "fix": "Add log rotation and a cleanup job, or increase the disk size.",
+   "immediate": "Free space now: delete or move old logs and temp files."
+  }
+ }
+]

@@ -16,67 +16,65 @@ The demo must work **fully offline from cloud accounts** using mock data. Real c
 
 ## 2. Tech stack (fixed)
 
+Changed on 2026-11-26 from Python 3.11 + FastAPI to Node.js + TypeScript (see the migration plan). The last
+Python version is tagged `python-final`. The demo's sample shop (`sample_app/shop.py`) stays in Python.
+
 | Area | Choice |
 | --- | --- |
-| Language | Python 3.11+ |
-| API | FastAPI + Uvicorn |
-| LLM | Anthropic Claude via official `anthropic` SDK, tool use. Provider wrapped behind an interface so Azure OpenAI can be added later |
-| Models | `pydantic` v2 for all schemas |
-| Config | `PyYAML` source registry, `.env` via `pydantic-settings` |
-| HTTP | `httpx` |
-| UI | Server-rendered Jinja2 HTML (no JS framework) |
-| Tests | `pytest` |
-| Packaging | `pyproject.toml`, runnable with `uv` or `pip` |
-| Storage | **None.** In-memory only (dedup cache + last 50 investigations for the demo UI) |
+| Language | TypeScript on Node.js 22 LTS (20+ works) |
+| API | Fastify 5 |
+| LLM | Anthropic Claude via the official `@anthropic-ai/sdk`, tool use. Provider wrapped behind an interface so Azure OpenAI can be added later |
+| Models | `zod` for all schemas; field names match the Python app's, so saved data is shared |
+| Config | `yaml` source registry, `.env` via `dotenv`, settings checked with `zod` |
+| HTTP | built-in `fetch` |
+| UI | Server-rendered Nunjucks HTML (no JS framework) |
+| Tests | Vitest |
+| Packaging | `node/package.json` (npm); Docker image with Node.js 22 and Python 3 (for the demo's sample shop) |
+| Storage | `DATABASE_URL`: SQLite file (default) or Postgres; empty = in memory only. Dedup state + last 200 investigations + last 200,000 API calls |
 
 ## 3. Repository layout
 
+Built so far, plus the planned parts (marked *planned*):
+
 ```
-incident-triage-agent/
+incident-triage-alert/
   README.md
-  pyproject.toml
+  Dockerfile                # Node.js 22 + Python 3 (for the demo's sample shop)
   .env.example
   config/
     sources.yaml            # Source Registry
-    routing.yaml            # service + severity -> destinations
-  app/
-    main.py                 # FastAPI app, routes
-    settings.py
-    models.py               # NormalizedAlert, ToolCall, Evidence, Verdict
-    registry.py             # loads/validates sources.yaml
-    security.py             # HMAC signature verification
-    normalizers/
-      azure_monitor.py      # Azure Monitor common alert schema
-      cloudwatch.py         # CloudWatch alarm via SNS
-      datadog.py            # Datadog webhook
-      generic.py            # in-house app
-    dedup.py                # fingerprint + TTL cache
-    redact.py               # PII redaction
-    connectors/
-      base.py               # Connector interface (6 tools)
-      mock.py               # fixture-backed, default
-      datadog.py            # optional real, read-only
-      azure.py              # optional real, read-only (Log Analytics / App Insights)
-      aws.py                # optional real, read-only (CloudWatch Logs / CloudTrail)
-    agent/
-      loop.py               # bounded investigation loop
-      prompts.py            # system prompt
-      tools.py              # tool JSON schemas exposed to the LLM
-    routing/
-      router.py
-      teams.py              # Teams incoming webhook, Adaptive Card
-      console.py
-    templates/
-      index.html            # list of investigations
-      investigation.html    # verdict + full reasoning trace
+    playbook.yaml           # suggested fixes by alert text
+    routing.yaml            # service + severity -> destinations (planned)
   fixtures/
-    scenarios/
-      bad_deploy_datadog/   # alert.json + logs/metrics/traces/audit/changes json
-      db_pool_cloudwatch/
-      iam_change_azure/
-  scripts/
-    simulate.py             # fires a signed webhook for a scenario
-  tests/
+    sample_alerts.json      # sample alerts from every source
+    traffic_24h.json        # frozen API traffic (golden tests)
+    scenarios/              # alert.json + logs/metrics/traces/audit/changes json (planned)
+  sample_app/
+    shop.py                 # demo shop with three real bugs (Python)
+  node/
+    package.json
+    src/
+      server.ts             # starts the web server
+      app.ts                # Fastify app, routes
+      settings.ts
+      models.ts             # NormalizedAlert, Investigation, ApiCall, Verdict (zod)
+      registry.ts           # loads/validates sources.yaml
+      security.ts           # HMAC signature verification
+      normalizers/index.ts  # Azure Monitor, CloudWatch via SNS, Datadog, in-house
+      dedup.ts              # fingerprint + repeat merging
+      db.ts                 # SQLite / Postgres persistence
+      store.ts, traffic.ts  # alerts and API calls
+      analysis.ts           # API analysis
+      location.ts           # file / folder / line from stack traces
+      logwatch.ts           # log watcher
+      demo.ts               # DEMO_MODE
+      redact.ts             # PII redaction (planned)
+      connectors/           # base, mock, datadog, azure, aws: read-only (planned)
+      agent/                # bounded investigation loop, prompts, tools (planned)
+      routing/              # router, teams, console (planned)
+    views/                  # Nunjucks templates
+    scripts/                # send-samples, generate-traffic, watch-logs; simulate (planned)
+    test/                   # Vitest; golden/ = outputs recorded from the Python version
 ```
 
 ## 4. Functional requirements
@@ -88,7 +86,7 @@ incident-triage-agent/
 - Return `202 Accepted` with `investigation_id` immediately; run the investigation as a background task.
 
 ### FR2 — Source Registry (`config/sources.yaml`)
-Each entry: `id`, `type` (`azure_monitor | cloudwatch | datadog | generic`), `service`, `owner_team`, `secret_env`, `connector` (`mock | real`), `scenario` (for mock). Validated with pydantic at startup; bad config fails fast with a clear error. Adding a source = YAML change only.
+Each entry: `id`, `type` (`azure_monitor | cloudwatch | datadog | generic`), `service`, `owner_team`, `secret_env`, `connector` (`mock | real`), `scenario` (for mock). Validated with zod at startup; bad config fails fast with a clear error. Adding a source = YAML change only.
 
 ### FR3 — Normalize
 Each normalizer maps its payload to:
@@ -148,7 +146,7 @@ Rules match on `service` and `severity` → destinations: `teams` (incoming webh
 - `GET /health`.
 
 ### FR11 — Simulator
-`python scripts/simulate.py <scenario> [--source <id>] [--repeat N]` builds the scenario's alert payload in the correct vendor format, signs it, and POSTs it. `--repeat 3` demonstrates dedup.
+`npm run simulate -- <scenario> [--source <id>] [--repeat N]` (in `node/`) builds the scenario's alert payload in the correct vendor format, signs it, and POSTs it. `--repeat 3` demonstrates dedup.
 
 ### FR12 — Demo scenarios (fixtures, realistic data)
 1. **bad_deploy_datadog** — `checkout-api` 5xx spike 10 min after deploy `v2.14.0`; logs show `NullPointerException` in new code path; trace errors in `PaymentClient`. Expected: SEV2, category deployment, root cause = deploy v2.14.0, next check = rollback.
@@ -161,7 +159,7 @@ Each fixture includes red-herring data (e.g. an unrelated warning) so the agent 
 - Secrets only from env; never logged; `.env` git-ignored.
 - Structured JSON logging for the app itself.
 - Investigation of a mock scenario completes in **< 90 s** and costs **< $0.10** with the default model.
-- Runs with one command: `uvicorn app.main:app --reload`.
+- Runs with one command: `npm run dev` (in `node/`).
 
 ## 6. Configuration (`.env.example`)
 ```
@@ -196,7 +194,7 @@ AWS_PROFILE=
 6. Seeded emails/IPs/keys in fixtures never appear in the LLM request (verified by a test that inspects the outgoing messages).
 7. Forcing `MAX_TOOL_CALLS=2` → verdict `inconclusive`, no crash.
 8. Report page shows the full trace for every investigation.
-9. `pytest` passes: signature, normalizers, dedup, redaction, registry validation, loop caps (LLM mocked).
+9. `npm test` passes: signature, normalizers, dedup, redaction, registry validation, loop caps (LLM mocked).
 10. README has a 5-step demo script anyone can follow.
 
 ## 8. Out of scope for the POC

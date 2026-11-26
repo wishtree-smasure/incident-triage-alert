@@ -1,0 +1,2628 @@
+{
+ "alerts": [
+  {
+   "id": "inv0",
+   "service": "checkout-api",
+   "severity": "SEV2"
+  },
+  {
+   "id": "inv1",
+   "service": "orders-service",
+   "severity": null
+  },
+  {
+   "id": "inv2",
+   "service": "auth-gateway",
+   "severity": "SEV2"
+  },
+  {
+   "id": "inv3",
+   "service": "inhouse-app",
+   "severity": "SEV2"
+  },
+  {
+   "id": "inv4",
+   "service": "checkout-api",
+   "severity": "SEV2"
+  },
+  {
+   "id": "inv5",
+   "service": "checkout-api",
+   "severity": "SEV1"
+  },
+  {
+   "id": "inv6",
+   "service": "orders-service",
+   "severity": null
+  },
+  {
+   "id": "inv7",
+   "service": "orders-service",
+   "severity": null
+  },
+  {
+   "id": "inv8",
+   "service": "auth-gateway",
+   "severity": "SEV1"
+  },
+  {
+   "id": "inv9",
+   "service": "billing-service",
+   "severity": "SEV2"
+  },
+  {
+   "id": "inv10",
+   "service": "checkout-api",
+   "severity": "SEV3"
+  },
+  {
+   "id": "inv11",
+   "service": "auth-gateway",
+   "severity": "SEV3"
+  },
+  {
+   "id": "inv12",
+   "service": "auth-gateway",
+   "severity": "SEV4"
+  },
+  {
+   "id": "inv13",
+   "service": "notification-service",
+   "severity": "SEV3"
+  },
+  {
+   "id": "inv14",
+   "service": "reporting-service",
+   "severity": "SEV4"
+  }
+ ],
+ "apps": {
+  "auth-gateway": {
+   "apis": [
+    {
+     "actions": [
+      "Check auth / validation"
+     ],
+     "advice": [
+      "14% client errors (4xx): callers send bad or unauthorized requests. Check auth and input validation."
+     ],
+     "avg_ms": 175.96761268781304,
+     "cache": "no",
+     "cache_reason": "POST changes data, so it must always run.",
+     "calls": 599,
+     "client_error_rate": 0.14023372287145242,
+     "error_rate": 0.001669449081803005,
+     "health": "degraded",
+     "max_ms": 567.9,
+     "method": "POST",
+     "p50_ms": 157.0,
+     "p95_ms": 357.3,
+     "p99_ms": 460.1,
+     "path": "/oauth/token",
+     "peak_count": 86,
+     "peak_hour": 9,
+     "share": 0.3998664886515354
+    },
+    {
+     "actions": [
+      "Cache per user (30 s)"
+     ],
+     "advice": [
+      "Cache per user for a short time (e.g. 30 s) to cut repeated calls."
+     ],
+     "avg_ms": 89.39946666666667,
+     "cache": "per-user",
+     "cache_reason": "The answer depends on the user: only cache per user / session, with a short TTL.",
+     "calls": 375,
+     "client_error_rate": 0.064,
+     "error_rate": 0.0,
+     "health": "healthy",
+     "max_ms": 395.0,
+     "method": "GET",
+     "p50_ms": 81.1,
+     "p95_ms": 167.4,
+     "p99_ms": 253.0,
+     "path": "/userinfo",
+     "peak_count": 40,
+     "peak_hour": 13,
+     "share": 0.25033377837116155
+    },
+    {
+     "actions": [
+      "Cache (60 s, shared)"
+     ],
+     "advice": [
+      "Cache it: 20% of all calls, read-only and shared. A 60 s cache would serve most of them without touching the backend."
+     ],
+     "avg_ms": 22.744333333333334,
+     "cache": "yes",
+     "cache_reason": "Read-only and the same for everyone: safe to cache (CDN or Redis).",
+     "calls": 300,
+     "client_error_rate": 0.0,
+     "error_rate": 0.0,
+     "health": "healthy",
+     "max_ms": 67.7,
+     "method": "GET",
+     "p50_ms": 20.1,
+     "p95_ms": 45.4,
+     "p99_ms": 53.7,
+     "path": "/.well-known/jwks.json",
+     "peak_count": 32,
+     "peak_hour": 13,
+     "share": 0.20026702269692923
+    },
+    {
+     "actions": [],
+     "advice": [],
+     "avg_ms": 7.550675675675675,
+     "cache": "no",
+     "cache_reason": "Reports live state; caching would hide problems.",
+     "calls": 148,
+     "client_error_rate": 0.0,
+     "error_rate": 0.0,
+     "health": "healthy",
+     "max_ms": 16.5,
+     "method": "GET",
+     "p50_ms": 6.6,
+     "p95_ms": 14.9,
+     "p99_ms": 16.5,
+     "path": "/health",
+     "peak_count": 16,
+     "peak_hour": 13,
+     "share": 0.09879839786381843
+    },
+    {
+     "actions": [],
+     "advice": [],
+     "avg_ms": 64.19868421052632,
+     "cache": "no",
+     "cache_reason": "POST changes data, so it must always run.",
+     "calls": 76,
+     "client_error_rate": 0.0,
+     "error_rate": 0.0,
+     "health": "healthy",
+     "max_ms": 203.9,
+     "method": "POST",
+     "p50_ms": 52.1,
+     "p95_ms": 143.9,
+     "p99_ms": 203.9,
+     "path": "/logout",
+     "peak_count": 8,
+     "peak_hour": 13,
+     "share": 0.050734312416555405
+    }
+   ],
+   "availability": 0.9993324432576769,
+   "calls_per_min": 1.0407758493119874,
+   "hourly": [
+    {
+     "calls": 25,
+     "height": 22,
+     "hour": 0
+    },
+    {
+     "calls": 23,
+     "height": 20,
+     "hour": 1
+    },
+    {
+     "calls": 23,
+     "height": 20,
+     "hour": 2
+    },
+    {
+     "calls": 23,
+     "height": 20,
+     "hour": 3
+    },
+    {
+     "calls": 25,
+     "height": 22,
+     "hour": 4
+    },
+    {
+     "calls": 29,
+     "height": 26,
+     "hour": 5
+    },
+    {
+     "calls": 41,
+     "height": 36,
+     "hour": 6
+    },
+    {
+     "calls": 63,
+     "height": 56,
+     "hour": 7
+    },
+    {
+     "calls": 89,
+     "height": 79,
+     "hour": 8
+    },
+    {
+     "calls": 105,
+     "height": 93,
+     "hour": 9
+    },
+    {
+     "calls": 107,
+     "height": 95,
+     "hour": 10
+    },
+    {
+     "calls": 107,
+     "height": 95,
+     "hour": 11
+    },
+    {
+     "calls": 113,
+     "height": 100,
+     "hour": 12
+    },
+    {
+     "calls": 113,
+     "height": 100,
+     "hour": 13
+    },
+    {
+     "calls": 97,
+     "height": 86,
+     "hour": 14
+    },
+    {
+     "calls": 67,
+     "height": 59,
+     "hour": 15
+    },
+    {
+     "calls": 45,
+     "height": 40,
+     "hour": 16
+    },
+    {
+     "calls": 37,
+     "height": 33,
+     "hour": 17
+    },
+    {
+     "calls": 49,
+     "height": 43,
+     "hour": 18
+    },
+    {
+     "calls": 75,
+     "height": 66,
+     "hour": 19
+    },
+    {
+     "calls": 90,
+     "height": 80,
+     "hour": 20
+    },
+    {
+     "calls": 75,
+     "height": 66,
+     "hour": 21
+    },
+    {
+     "calls": 47,
+     "height": 42,
+     "hour": 22
+    },
+    {
+     "calls": 30,
+     "height": 27,
+     "hour": 23
+    }
+   ],
+   "most_errors": {
+    "actions": [
+     "Check auth / validation"
+    ],
+    "advice": [
+     "14% client errors (4xx): callers send bad or unauthorized requests. Check auth and input validation."
+    ],
+    "avg_ms": 175.96761268781304,
+    "cache": "no",
+    "cache_reason": "POST changes data, so it must always run.",
+    "calls": 599,
+    "client_error_rate": 0.14023372287145242,
+    "error_rate": 0.001669449081803005,
+    "health": "degraded",
+    "max_ms": 567.9,
+    "method": "POST",
+    "p50_ms": 157.0,
+    "p95_ms": 357.3,
+    "p99_ms": 460.1,
+    "path": "/oauth/token",
+    "peak_count": 86,
+    "peak_hour": 9,
+    "share": 0.3998664886515354
+   },
+   "open_alerts": 4,
+   "overview": {
+    "avg_ms": 101.3012683578104,
+    "calls": 1498,
+    "client_error_rate": 0.07209612817089453,
+    "error_rate": 0.0006675567423230974,
+    "health": "unhealthy",
+    "max_ms": 567.9,
+    "p50_ms": 80.7,
+    "p95_ms": 282.4,
+    "p99_ms": 406.7,
+    "peak_count": 113,
+    "peak_hour": 12
+   },
+   "quiet_hour": 1,
+   "recommendations": [
+    {
+     "api": "POST /oauth/token",
+     "text": "14% client errors (4xx): callers send bad or unauthorized requests. Check auth and input validation."
+    },
+    {
+     "api": "GET /userinfo",
+     "text": "Cache per user for a short time (e.g. 30 s) to cut repeated calls."
+    },
+    {
+     "api": "GET /.well-known/jwks.json",
+     "text": "Cache it: 20% of all calls, read-only and shared. A 60 s cache would serve most of them without touching the backend."
+    }
+   ],
+   "show_stoppers": 1,
+   "slowest": {
+    "actions": [
+     "Check auth / validation"
+    ],
+    "advice": [
+     "14% client errors (4xx): callers send bad or unauthorized requests. Check auth and input validation."
+    ],
+    "avg_ms": 175.96761268781304,
+    "cache": "no",
+    "cache_reason": "POST changes data, so it must always run.",
+    "calls": 599,
+    "client_error_rate": 0.14023372287145242,
+    "error_rate": 0.001669449081803005,
+    "health": "degraded",
+    "max_ms": 567.9,
+    "method": "POST",
+    "p50_ms": 157.0,
+    "p95_ms": 357.3,
+    "p99_ms": 460.1,
+    "path": "/oauth/token",
+    "peak_count": 86,
+    "peak_hour": 9,
+    "share": 0.3998664886515354
+   },
+   "spike": 1.8104138851802405,
+   "status_groups": {
+    "2xx": 1389,
+    "3xx": 0,
+    "4xx": 108,
+    "5xx": 1
+   }
+  },
+  "billing-service": {
+   "apis": [
+    {
+     "actions": [
+      "Cache (60 s, shared)"
+     ],
+     "advice": [
+      "Cache it: 34% of all calls, read-only and shared. A 60 s cache would serve most of them without touching the backend."
+     ],
+     "avg_ms": 267.9843137254902,
+     "cache": "yes",
+     "cache_reason": "Read-only and the same for everyone: safe to cache (CDN or Redis).",
+     "calls": 102,
+     "client_error_rate": 0.0196078431372549,
+     "error_rate": 0.0,
+     "health": "healthy",
+     "max_ms": 628.5,
+     "method": "GET",
+     "p50_ms": 253.0,
+     "p95_ms": 491.9,
+     "p99_ms": 607.5,
+     "path": "/invoices/{id}",
+     "peak_count": 11,
+     "peak_hour": 13,
+     "share": 0.3422818791946309
+    },
+    {
+     "actions": [
+      "Cache (60 s, shared)"
+     ],
+     "advice": [
+      "Cache it: 30% of all calls, read-only and shared. A 60 s cache would serve most of them without touching the backend."
+     ],
+     "avg_ms": 51.28977272727273,
+     "cache": "yes",
+     "cache_reason": "Read-only and the same for everyone: safe to cache (CDN or Redis).",
+     "calls": 88,
+     "client_error_rate": 0.0,
+     "error_rate": 0.0,
+     "health": "healthy",
+     "max_ms": 145.1,
+     "method": "GET",
+     "p50_ms": 45.8,
+     "p95_ms": 92.0,
+     "p99_ms": 145.1,
+     "path": "/plans",
+     "peak_count": 10,
+     "peak_hour": 13,
+     "share": 0.2953020134228188
+    },
+    {
+     "actions": [
+      "Fix server errors",
+      "Speed up: slow"
+     ],
+     "advice": [
+      "2.0% server errors: check the Alerts tab for this application and fix the top error.",
+      "Slow (p95 1,423 ms): find the slowest query or external call and add a timeout."
+     ],
+     "avg_ms": 699.4040816326532,
+     "cache": "no",
+     "cache_reason": "POST changes data, so it must always run.",
+     "calls": 49,
+     "client_error_rate": 0.02040816326530612,
+     "error_rate": 0.02040816326530612,
+     "health": "degraded",
+     "max_ms": 1520.1,
+     "method": "POST",
+     "p50_ms": 570.5,
+     "p95_ms": 1423.3,
+     "p99_ms": 1520.1,
+     "path": "/invoices",
+     "peak_count": 5,
+     "peak_hour": 13,
+     "share": 0.1644295302013423
+    },
+    {
+     "actions": [],
+     "advice": [],
+     "avg_ms": 7.644897959183674,
+     "cache": "no",
+     "cache_reason": "Reports live state; caching would hide problems.",
+     "calls": 49,
+     "client_error_rate": 0.0,
+     "error_rate": 0.0,
+     "health": "healthy",
+     "max_ms": 21.0,
+     "method": "GET",
+     "p50_ms": 7.1,
+     "p95_ms": 12.2,
+     "p99_ms": 21.0,
+     "path": "/health",
+     "peak_count": 5,
+     "peak_hour": 13,
+     "share": 0.1644295302013423
+    },
+    {
+     "actions": [
+      "Fix server errors",
+      "Move to background job"
+     ],
+     "advice": [
+      "10.0% server errors: check the Alerts tab for this application and fix the top error.",
+      "Very slow (p95 17,374 ms): move the slow work to a background job and return 202 straight away."
+     ],
+     "avg_ms": 8535.869999999999,
+     "cache": "no",
+     "cache_reason": "POST changes data, so it must always run.",
+     "calls": 10,
+     "client_error_rate": 0.0,
+     "error_rate": 0.1,
+     "health": "unhealthy",
+     "max_ms": 17373.7,
+     "method": "POST",
+     "p50_ms": 7004.7,
+     "p95_ms": 17373.7,
+     "p99_ms": 17373.7,
+     "path": "/reconciliation/run",
+     "peak_count": 2,
+     "peak_hour": 2,
+     "share": 0.03355704697986577
+    }
+   ],
+   "availability": 0.9932885906040269,
+   "calls_per_min": 0.20702713634703734,
+   "hourly": [
+    {
+     "calls": 6,
+     "height": 19,
+     "hour": 0
+    },
+    {
+     "calls": 5,
+     "height": 16,
+     "hour": 1
+    },
+    {
+     "calls": 6,
+     "height": 19,
+     "hour": 2
+    },
+    {
+     "calls": 6,
+     "height": 19,
+     "hour": 3
+    },
+    {
+     "calls": 6,
+     "height": 19,
+     "hour": 4
+    },
+    {
+     "calls": 5,
+     "height": 16,
+     "hour": 5
+    },
+    {
+     "calls": 5,
+     "height": 16,
+     "hour": 6
+    },
+    {
+     "calls": 4,
+     "height": 13,
+     "hour": 7
+    },
+    {
+     "calls": 5,
+     "height": 16,
+     "hour": 8
+    },
+    {
+     "calls": 6,
+     "height": 19,
+     "hour": 9
+    },
+    {
+     "calls": 11,
+     "height": 35,
+     "hour": 10
+    },
+    {
+     "calls": 19,
+     "height": 61,
+     "hour": 11
+    },
+    {
+     "calls": 26,
+     "height": 84,
+     "hour": 12
+    },
+    {
+     "calls": 31,
+     "height": 100,
+     "hour": 13
+    },
+    {
+     "calls": 26,
+     "height": 84,
+     "hour": 14
+    },
+    {
+     "calls": 19,
+     "height": 61,
+     "hour": 15
+    },
+    {
+     "calls": 11,
+     "height": 35,
+     "hour": 16
+    },
+    {
+     "calls": 8,
+     "height": 26,
+     "hour": 17
+    },
+    {
+     "calls": 12,
+     "height": 39,
+     "hour": 18
+    },
+    {
+     "calls": 19,
+     "height": 61,
+     "hour": 19
+    },
+    {
+     "calls": 25,
+     "height": 81,
+     "hour": 20
+    },
+    {
+     "calls": 19,
+     "height": 61,
+     "hour": 21
+    },
+    {
+     "calls": 12,
+     "height": 39,
+     "hour": 22
+    },
+    {
+     "calls": 6,
+     "height": 19,
+     "hour": 23
+    }
+   ],
+   "most_errors": {
+    "actions": [
+     "Fix server errors",
+     "Move to background job"
+    ],
+    "advice": [
+     "10.0% server errors: check the Alerts tab for this application and fix the top error.",
+     "Very slow (p95 17,374 ms): move the slow work to a background job and return 202 straight away."
+    ],
+    "avg_ms": 8535.869999999999,
+    "cache": "no",
+    "cache_reason": "POST changes data, so it must always run.",
+    "calls": 10,
+    "client_error_rate": 0.0,
+    "error_rate": 0.1,
+    "health": "unhealthy",
+    "max_ms": 17373.7,
+    "method": "POST",
+    "p50_ms": 7004.7,
+    "p95_ms": 17373.7,
+    "p99_ms": 17373.7,
+    "path": "/reconciliation/run",
+    "peak_count": 2,
+    "peak_hour": 2,
+    "share": 0.03355704697986577
+   },
+   "open_alerts": 1,
+   "overview": {
+    "avg_ms": 509.5704697986577,
+    "calls": 298,
+    "client_error_rate": 0.010067114093959731,
+    "error_rate": 0.006711409395973154,
+    "health": "degraded",
+    "max_ms": 17373.7,
+    "p50_ms": 147.0,
+    "p95_ms": 1359.1,
+    "p99_ms": 9884.8,
+    "peak_count": 31,
+    "peak_hour": 13
+   },
+   "quiet_hour": 7,
+   "recommendations": [
+    {
+     "api": "POST /invoices",
+     "text": "2.0% server errors: check the Alerts tab for this application and fix the top error."
+    },
+    {
+     "api": "POST /reconciliation/run",
+     "text": "10.0% server errors: check the Alerts tab for this application and fix the top error."
+    },
+    {
+     "api": "POST /reconciliation/run",
+     "text": "Very slow (p95 17,374 ms): move the slow work to a background job and return 202 straight away."
+    },
+    {
+     "api": "POST /invoices",
+     "text": "Slow (p95 1,423 ms): find the slowest query or external call and add a timeout."
+    },
+    {
+     "api": "GET /invoices/{id}",
+     "text": "Cache it: 34% of all calls, read-only and shared. A 60 s cache would serve most of them without touching the backend."
+    },
+    {
+     "api": "GET /plans",
+     "text": "Cache it: 30% of all calls, read-only and shared. A 60 s cache would serve most of them without touching the backend."
+    }
+   ],
+   "show_stoppers": 0,
+   "slowest": {
+    "actions": [
+     "Fix server errors",
+     "Move to background job"
+    ],
+    "advice": [
+     "10.0% server errors: check the Alerts tab for this application and fix the top error.",
+     "Very slow (p95 17,374 ms): move the slow work to a background job and return 202 straight away."
+    ],
+    "avg_ms": 8535.869999999999,
+    "cache": "no",
+    "cache_reason": "POST changes data, so it must always run.",
+    "calls": 10,
+    "client_error_rate": 0.0,
+    "error_rate": 0.1,
+    "health": "unhealthy",
+    "max_ms": 17373.7,
+    "method": "POST",
+    "p50_ms": 7004.7,
+    "p95_ms": 17373.7,
+    "p99_ms": 17373.7,
+    "path": "/reconciliation/run",
+    "peak_count": 2,
+    "peak_hour": 2,
+    "share": 0.03355704697986577
+   },
+   "spike": 2.4966442953020134,
+   "status_groups": {
+    "2xx": 293,
+    "3xx": 0,
+    "4xx": 3,
+    "5xx": 2
+   }
+  },
+  "checkout-api": {
+   "apis": [
+    {
+     "actions": [],
+     "advice": [],
+     "avg_ms": 59.012499999999996,
+     "cache": "no",
+     "cache_reason": "Reports live state; caching would hide problems.",
+     "calls": 224,
+     "client_error_rate": 0.0,
+     "error_rate": 0.008928571428571428,
+     "health": "healthy",
+     "max_ms": 189.4,
+     "method": "GET",
+     "p50_ms": 52.9,
+     "p95_ms": 111.9,
+     "p99_ms": 150.8,
+     "path": "/checkout/{id}/status",
+     "peak_count": 24,
+     "peak_hour": 13,
+     "share": 0.29747675962815406
+    },
+    {
+     "actions": [
+      "Cache (60 s, shared)"
+     ],
+     "advice": [
+      "Cache it: 25% of all calls, read-only and shared. A 60 s cache would serve most of them without touching the backend."
+     ],
+     "avg_ms": 136.73526315789474,
+     "cache": "yes",
+     "cache_reason": "Read-only and the same for everyone: safe to cache (CDN or Redis).",
+     "calls": 190,
+     "client_error_rate": 0.0,
+     "error_rate": 0.0,
+     "health": "healthy",
+     "max_ms": 584.6,
+     "method": "GET",
+     "p50_ms": 120.4,
+     "p95_ms": 269.7,
+     "p99_ms": 479.5,
+     "path": "/payment-methods",
+     "peak_count": 20,
+     "peak_hour": 13,
+     "share": 0.25232403718459495
+    },
+    {
+     "actions": [
+      "Fix server errors",
+      "Speed up: slow"
+     ],
+     "advice": [
+      "4.7% server errors: check the Alerts tab for this application and fix the top error.",
+      "Slow (p95 1,328 ms): find the slowest query or external call and add a timeout."
+     ],
+     "avg_ms": 678.4432432432433,
+     "cache": "no",
+     "cache_reason": "POST changes data, so it must always run.",
+     "calls": 148,
+     "client_error_rate": 0.02027027027027027,
+     "error_rate": 0.0472972972972973,
+     "health": "degraded",
+     "max_ms": 1892.3,
+     "method": "POST",
+     "p50_ms": 600.7,
+     "p95_ms": 1328.4,
+     "p99_ms": 1775.8,
+     "path": "/checkout",
+     "peak_count": 16,
+     "peak_hour": 13,
+     "share": 0.19654714475431606
+    },
+    {
+     "actions": [
+      "Fix server errors",
+      "Speed up: slow"
+     ],
+     "advice": [
+      "2.6% server errors: check the Alerts tab for this application and fix the top error.",
+      "Slow (p95 1,890 ms): find the slowest query or external call and add a timeout."
+     ],
+     "avg_ms": 959.4739130434782,
+     "cache": "no",
+     "cache_reason": "POST changes data, so it must always run.",
+     "calls": 115,
+     "client_error_rate": 0.008695652173913044,
+     "error_rate": 0.02608695652173913,
+     "health": "degraded",
+     "max_ms": 2585.3,
+     "method": "POST",
+     "p50_ms": 878.2,
+     "p95_ms": 1889.7,
+     "p99_ms": 2382.4,
+     "path": "/payments/authorize",
+     "peak_count": 12,
+     "peak_hour": 13,
+     "share": 0.15272244355909695
+    },
+    {
+     "actions": [],
+     "advice": [],
+     "avg_ms": 6.707894736842105,
+     "cache": "no",
+     "cache_reason": "Reports live state; caching would hide problems.",
+     "calls": 76,
+     "client_error_rate": 0.0,
+     "error_rate": 0.0,
+     "health": "healthy",
+     "max_ms": 17.2,
+     "method": "GET",
+     "p50_ms": 6.2,
+     "p95_ms": 12.8,
+     "p99_ms": 17.2,
+     "path": "/health",
+     "peak_count": 8,
+     "peak_hour": 13,
+     "share": 0.10092961487383798
+    }
+   ],
+   "availability": 0.9840637450199203,
+   "calls_per_min": 0.523525419861704,
+   "hourly": [
+    {
+     "calls": 11,
+     "height": 14,
+     "hour": 0
+    },
+    {
+     "calls": 11,
+     "height": 14,
+     "hour": 1
+    },
+    {
+     "calls": 11,
+     "height": 14,
+     "hour": 2
+    },
+    {
+     "calls": 11,
+     "height": 14,
+     "hour": 3
+    },
+    {
+     "calls": 11,
+     "height": 14,
+     "hour": 4
+    },
+    {
+     "calls": 11,
+     "height": 14,
+     "hour": 5
+    },
+    {
+     "calls": 11,
+     "height": 14,
+     "hour": 6
+    },
+    {
+     "calls": 11,
+     "height": 14,
+     "hour": 7
+    },
+    {
+     "calls": 11,
+     "height": 14,
+     "hour": 8
+    },
+    {
+     "calls": 16,
+     "height": 20,
+     "hour": 9
+    },
+    {
+     "calls": 27,
+     "height": 34,
+     "hour": 10
+    },
+    {
+     "calls": 47,
+     "height": 59,
+     "hour": 11
+    },
+    {
+     "calls": 69,
+     "height": 86,
+     "hour": 12
+    },
+    {
+     "calls": 80,
+     "height": 100,
+     "hour": 13
+    },
+    {
+     "calls": 69,
+     "height": 86,
+     "hour": 14
+    },
+    {
+     "calls": 47,
+     "height": 59,
+     "hour": 15
+    },
+    {
+     "calls": 28,
+     "height": 35,
+     "hour": 16
+    },
+    {
+     "calls": 20,
+     "height": 25,
+     "hour": 17
+    },
+    {
+     "calls": 32,
+     "height": 40,
+     "hour": 18
+    },
+    {
+     "calls": 53,
+     "height": 66,
+     "hour": 19
+    },
+    {
+     "calls": 66,
+     "height": 82,
+     "hour": 20
+    },
+    {
+     "calls": 53,
+     "height": 66,
+     "hour": 21
+    },
+    {
+     "calls": 31,
+     "height": 39,
+     "hour": 22
+    },
+    {
+     "calls": 16,
+     "height": 20,
+     "hour": 23
+    }
+   ],
+   "most_errors": {
+    "actions": [
+     "Fix server errors",
+     "Speed up: slow"
+    ],
+    "advice": [
+     "4.7% server errors: check the Alerts tab for this application and fix the top error.",
+     "Slow (p95 1,328 ms): find the slowest query or external call and add a timeout."
+    ],
+    "avg_ms": 678.4432432432433,
+    "cache": "no",
+    "cache_reason": "POST changes data, so it must always run.",
+    "calls": 148,
+    "client_error_rate": 0.02027027027027027,
+    "error_rate": 0.0472972972972973,
+    "health": "degraded",
+    "max_ms": 1892.3,
+    "method": "POST",
+    "p50_ms": 600.7,
+    "p95_ms": 1328.4,
+    "p99_ms": 1775.8,
+    "path": "/checkout",
+    "peak_count": 16,
+    "peak_hour": 13,
+    "share": 0.19654714475431606
+   },
+   "open_alerts": 4,
+   "overview": {
+    "avg_ms": 332.61274900398405,
+    "calls": 753,
+    "client_error_rate": 0.005312084993359893,
+    "error_rate": 0.01593625498007968,
+    "health": "unhealthy",
+    "max_ms": 2585.3,
+    "p50_ms": 111.4,
+    "p95_ms": 1207.5,
+    "p99_ms": 1777.7,
+    "peak_count": 80,
+    "peak_hour": 13
+   },
+   "quiet_hour": 0,
+   "recommendations": [
+    {
+     "api": "Whole application",
+     "text": "Traffic at 13:00 UTC is 2.5x the average hour. Scale out before the peak (or enable autoscaling) and avoid deploys at that time."
+    },
+    {
+     "api": "POST /checkout",
+     "text": "4.7% server errors: check the Alerts tab for this application and fix the top error."
+    },
+    {
+     "api": "POST /payments/authorize",
+     "text": "2.6% server errors: check the Alerts tab for this application and fix the top error."
+    },
+    {
+     "api": "POST /checkout",
+     "text": "Slow (p95 1,328 ms): find the slowest query or external call and add a timeout."
+    },
+    {
+     "api": "POST /payments/authorize",
+     "text": "Slow (p95 1,890 ms): find the slowest query or external call and add a timeout."
+    },
+    {
+     "api": "GET /payment-methods",
+     "text": "Cache it: 25% of all calls, read-only and shared. A 60 s cache would serve most of them without touching the backend."
+    }
+   ],
+   "show_stoppers": 1,
+   "slowest": {
+    "actions": [
+     "Fix server errors",
+     "Speed up: slow"
+    ],
+    "advice": [
+     "2.6% server errors: check the Alerts tab for this application and fix the top error.",
+     "Slow (p95 1,890 ms): find the slowest query or external call and add a timeout."
+    ],
+    "avg_ms": 959.4739130434782,
+    "cache": "no",
+    "cache_reason": "POST changes data, so it must always run.",
+    "calls": 115,
+    "client_error_rate": 0.008695652173913044,
+    "error_rate": 0.02608695652173913,
+    "health": "degraded",
+    "max_ms": 2585.3,
+    "method": "POST",
+    "p50_ms": 878.2,
+    "p95_ms": 1889.7,
+    "p99_ms": 2382.4,
+    "path": "/payments/authorize",
+    "peak_count": 12,
+    "peak_hour": 13,
+    "share": 0.15272244355909695
+   },
+   "spike": 2.549800796812749,
+   "status_groups": {
+    "2xx": 737,
+    "3xx": 0,
+    "4xx": 4,
+    "5xx": 12
+   }
+  },
+  "notification-service": {
+   "apis": [
+    {
+     "actions": [
+      "Fix server errors",
+      "Speed up: slow"
+     ],
+     "advice": [
+      "1.5% server errors: check the Alerts tab for this application and fix the top error.",
+      "Slow (p95 1,752 ms): find the slowest query or external call and add a timeout."
+     ],
+     "avg_ms": 931.2083743842364,
+     "cache": "no",
+     "cache_reason": "POST changes data, so it must always run.",
+     "calls": 203,
+     "client_error_rate": 0.009852216748768473,
+     "error_rate": 0.014778325123152709,
+     "health": "degraded",
+     "max_ms": 2785.5,
+     "method": "POST",
+     "p50_ms": 879.1,
+     "p95_ms": 1752.2,
+     "p99_ms": 2164.7,
+     "path": "/emails",
+     "peak_count": 21,
+     "peak_hour": 13,
+     "share": 0.45111111111111113
+    },
+    {
+     "actions": [
+      "Cache (60 s, shared)"
+     ],
+     "advice": [
+      "Cache it: 26% of all calls, read-only and shared. A 60 s cache would serve most of them without touching the backend."
+     ],
+     "avg_ms": 37.35478260869565,
+     "cache": "yes",
+     "cache_reason": "Read-only and the same for everyone: safe to cache (CDN or Redis).",
+     "calls": 115,
+     "client_error_rate": 0.02608695652173913,
+     "error_rate": 0.0,
+     "health": "healthy",
+     "max_ms": 107.9,
+     "method": "GET",
+     "p50_ms": 33.2,
+     "p95_ms": 74.3,
+     "p99_ms": 86.3,
+     "path": "/templates/{id}",
+     "peak_count": 12,
+     "peak_hour": 13,
+     "share": 0.25555555555555554
+    },
+    {
+     "actions": [],
+     "advice": [],
+     "avg_ms": 7.265151515151516,
+     "cache": "no",
+     "cache_reason": "Reports live state; caching would hide problems.",
+     "calls": 66,
+     "client_error_rate": 0.0,
+     "error_rate": 0.0,
+     "health": "healthy",
+     "max_ms": 21.2,
+     "method": "GET",
+     "p50_ms": 7.0,
+     "p95_ms": 12.3,
+     "p99_ms": 21.2,
+     "path": "/health",
+     "peak_count": 7,
+     "peak_hour": 13,
+     "share": 0.14666666666666667
+    },
+    {
+     "actions": [
+      "Speed up: slow"
+     ],
+     "advice": [
+      "Slow (p95 892 ms): find the slowest query or external call and add a timeout."
+     ],
+     "avg_ms": 473.8863636363636,
+     "cache": "no",
+     "cache_reason": "POST changes data, so it must always run.",
+     "calls": 66,
+     "client_error_rate": 0.030303030303030304,
+     "error_rate": 0.0,
+     "health": "degraded",
+     "max_ms": 1499.4,
+     "method": "POST",
+     "p50_ms": 409.1,
+     "p95_ms": 891.7,
+     "p99_ms": 1499.4,
+     "path": "/sms",
+     "peak_count": 7,
+     "peak_hour": 13,
+     "share": 0.14666666666666667
+    }
+   ],
+   "availability": 0.9933333333333333,
+   "calls_per_min": 0.31352303621955696,
+   "hourly": [
+    {
+     "calls": 7,
+     "height": 15,
+     "hour": 0
+    },
+    {
+     "calls": 7,
+     "height": 15,
+     "hour": 1
+    },
+    {
+     "calls": 7,
+     "height": 15,
+     "hour": 2
+    },
+    {
+     "calls": 7,
+     "height": 15,
+     "hour": 3
+    },
+    {
+     "calls": 7,
+     "height": 15,
+     "hour": 4
+    },
+    {
+     "calls": 7,
+     "height": 15,
+     "hour": 5
+    },
+    {
+     "calls": 7,
+     "height": 15,
+     "hour": 6
+    },
+    {
+     "calls": 7,
+     "height": 15,
+     "hour": 7
+    },
+    {
+     "calls": 7,
+     "height": 15,
+     "hour": 8
+    },
+    {
+     "calls": 8,
+     "height": 17,
+     "hour": 9
+    },
+    {
+     "calls": 15,
+     "height": 32,
+     "hour": 10
+    },
+    {
+     "calls": 28,
+     "height": 60,
+     "hour": 11
+    },
+    {
+     "calls": 41,
+     "height": 87,
+     "hour": 12
+    },
+    {
+     "calls": 47,
+     "height": 100,
+     "hour": 13
+    },
+    {
+     "calls": 41,
+     "height": 87,
+     "hour": 14
+    },
+    {
+     "calls": 28,
+     "height": 60,
+     "hour": 15
+    },
+    {
+     "calls": 15,
+     "height": 32,
+     "hour": 16
+    },
+    {
+     "calls": 13,
+     "height": 28,
+     "hour": 17
+    },
+    {
+     "calls": 20,
+     "height": 43,
+     "hour": 18
+    },
+    {
+     "calls": 32,
+     "height": 68,
+     "hour": 19
+    },
+    {
+     "calls": 40,
+     "height": 85,
+     "hour": 20
+    },
+    {
+     "calls": 32,
+     "height": 68,
+     "hour": 21
+    },
+    {
+     "calls": 19,
+     "height": 40,
+     "hour": 22
+    },
+    {
+     "calls": 8,
+     "height": 17,
+     "hour": 23
+    }
+   ],
+   "most_errors": {
+    "actions": [
+     "Fix server errors",
+     "Speed up: slow"
+    ],
+    "advice": [
+     "1.5% server errors: check the Alerts tab for this application and fix the top error.",
+     "Slow (p95 1,752 ms): find the slowest query or external call and add a timeout."
+    ],
+    "avg_ms": 931.2083743842364,
+    "cache": "no",
+    "cache_reason": "POST changes data, so it must always run.",
+    "calls": 203,
+    "client_error_rate": 0.009852216748768473,
+    "error_rate": 0.014778325123152709,
+    "health": "degraded",
+    "max_ms": 2785.5,
+    "method": "POST",
+    "p50_ms": 879.1,
+    "p95_ms": 1752.2,
+    "p99_ms": 2164.7,
+    "path": "/emails",
+    "peak_count": 21,
+    "peak_hour": 13,
+    "share": 0.45111111111111113
+   },
+   "open_alerts": 1,
+   "overview": {
+    "avg_ms": 500.1935555555556,
+    "calls": 450,
+    "client_error_rate": 0.015555555555555555,
+    "error_rate": 0.006666666666666667,
+    "health": "degraded",
+    "max_ms": 2785.5,
+    "p50_ms": 412.7,
+    "p95_ms": 1499.4,
+    "p99_ms": 1971.0,
+    "peak_count": 47,
+    "peak_hour": 13
+   },
+   "quiet_hour": 0,
+   "recommendations": [
+    {
+     "api": "Whole application",
+     "text": "Traffic at 13:00 UTC is 2.5x the average hour. Scale out before the peak (or enable autoscaling) and avoid deploys at that time."
+    },
+    {
+     "api": "POST /emails",
+     "text": "1.5% server errors: check the Alerts tab for this application and fix the top error."
+    },
+    {
+     "api": "POST /emails",
+     "text": "Slow (p95 1,752 ms): find the slowest query or external call and add a timeout."
+    },
+    {
+     "api": "POST /sms",
+     "text": "Slow (p95 892 ms): find the slowest query or external call and add a timeout."
+    },
+    {
+     "api": "GET /templates/{id}",
+     "text": "Cache it: 26% of all calls, read-only and shared. A 60 s cache would serve most of them without touching the backend."
+    }
+   ],
+   "show_stoppers": 0,
+   "slowest": {
+    "actions": [
+     "Fix server errors",
+     "Speed up: slow"
+    ],
+    "advice": [
+     "1.5% server errors: check the Alerts tab for this application and fix the top error.",
+     "Slow (p95 1,752 ms): find the slowest query or external call and add a timeout."
+    ],
+    "avg_ms": 931.2083743842364,
+    "cache": "no",
+    "cache_reason": "POST changes data, so it must always run.",
+    "calls": 203,
+    "client_error_rate": 0.009852216748768473,
+    "error_rate": 0.014778325123152709,
+    "health": "degraded",
+    "max_ms": 2785.5,
+    "method": "POST",
+    "p50_ms": 879.1,
+    "p95_ms": 1752.2,
+    "p99_ms": 2164.7,
+    "path": "/emails",
+    "peak_count": 21,
+    "peak_hour": 13,
+    "share": 0.45111111111111113
+   },
+   "spike": 2.506666666666667,
+   "status_groups": {
+    "2xx": 440,
+    "3xx": 0,
+    "4xx": 7,
+    "5xx": 3
+   }
+  },
+  "orders-service": {
+   "apis": [
+    {
+     "actions": [
+      "Fix server errors",
+      "Speed up: very slow",
+      "Cache per user (30 s)"
+     ],
+     "advice": [
+      "5.6% server errors: check the Alerts tab for this application and fix the top error.",
+      "Very slow (p95 3,472 ms): add a database index, paginate, or precompute the result.",
+      "Cache per user for a short time (e.g. 30 s) to cut repeated calls."
+     ],
+     "avg_ms": 2025.855,
+     "cache": "per-user",
+     "cache_reason": "The answer depends on the user: only cache per user / session, with a short TTL.",
+     "calls": 180,
+     "client_error_rate": 0.0,
+     "error_rate": 0.05555555555555555,
+     "health": "unhealthy",
+     "max_ms": 6069.6,
+     "method": "GET",
+     "p50_ms": 1826.6,
+     "p95_ms": 3472.3,
+     "p99_ms": 5654.5,
+     "path": "/orders",
+     "peak_count": 19,
+     "peak_hour": 13,
+     "share": 0.30303030303030304
+    },
+    {
+     "actions": [
+      "Fix server errors",
+      "Speed up: slow",
+      "Cache per user (30 s)"
+     ],
+     "advice": [
+      "1.1% server errors: check the Alerts tab for this application and fix the top error.",
+      "Slow (p95 892 ms): find the slowest query or external call and add a timeout.",
+      "Cache per user for a short time (e.g. 30 s) to cut repeated calls."
+     ],
+     "avg_ms": 448.5888888888889,
+     "cache": "per-user",
+     "cache_reason": "The answer depends on the user: only cache per user / session, with a short TTL.",
+     "calls": 180,
+     "client_error_rate": 0.016666666666666666,
+     "error_rate": 0.011111111111111112,
+     "health": "degraded",
+     "max_ms": 1228.5,
+     "method": "GET",
+     "p50_ms": 400.9,
+     "p95_ms": 891.5,
+     "p99_ms": 1217.2,
+     "path": "/orders/{id}",
+     "peak_count": 19,
+     "peak_hour": 13,
+     "share": 0.30303030303030304
+    },
+    {
+     "actions": [],
+     "advice": [],
+     "avg_ms": 7.5806818181818185,
+     "cache": "no",
+     "cache_reason": "Reports live state; caching would hide problems.",
+     "calls": 88,
+     "client_error_rate": 0.0,
+     "error_rate": 0.0,
+     "health": "healthy",
+     "max_ms": 34.9,
+     "method": "GET",
+     "p50_ms": 7.0,
+     "p95_ms": 12.8,
+     "p99_ms": 34.9,
+     "path": "/health",
+     "peak_count": 10,
+     "peak_hour": 13,
+     "share": 0.14814814814814814
+    },
+    {
+     "actions": [
+      "Fix server errors",
+      "Speed up: slow"
+     ],
+     "advice": [
+      "1.1% server errors: check the Alerts tab for this application and fix the top error.",
+      "Slow (p95 1,786 ms): find the slowest query or external call and add a timeout."
+     ],
+     "avg_ms": 943.4704545454545,
+     "cache": "no",
+     "cache_reason": "POST changes data, so it must always run.",
+     "calls": 88,
+     "client_error_rate": 0.022727272727272728,
+     "error_rate": 0.011363636363636364,
+     "health": "degraded",
+     "max_ms": 2362.3,
+     "method": "POST",
+     "p50_ms": 829.9,
+     "p95_ms": 1785.6,
+     "p99_ms": 2362.3,
+     "path": "/orders",
+     "peak_count": 10,
+     "peak_hour": 13,
+     "share": 0.14814814814814814
+    },
+    {
+     "actions": [
+      "Speed up: very slow",
+      "Cache per user (30 s)"
+     ],
+     "advice": [
+      "Very slow (p95 5,971 ms): add a database index, paginate, or precompute the result.",
+      "Cache per user for a short time (e.g. 30 s) to cut repeated calls."
+     ],
+     "avg_ms": 3348.1758620689657,
+     "cache": "per-user",
+     "cache_reason": "The answer depends on the user: only cache per user / session, with a short TTL.",
+     "calls": 58,
+     "client_error_rate": 0.0,
+     "error_rate": 0.0,
+     "health": "unhealthy",
+     "max_ms": 7687.8,
+     "method": "GET",
+     "p50_ms": 2945.5,
+     "p95_ms": 5970.7,
+     "p99_ms": 7687.8,
+     "path": "/orders/{id}/invoice",
+     "peak_count": 9,
+     "peak_hour": 2,
+     "share": 0.09764309764309764
+    }
+   ],
+   "availability": 0.9781144781144782,
+   "calls_per_min": 0.4128532809225691,
+   "hourly": [
+    {
+     "calls": 13,
+     "height": 22,
+     "hour": 0
+    },
+    {
+     "calls": 15,
+     "height": 25,
+     "hour": 1
+    },
+    {
+     "calls": 15,
+     "height": 25,
+     "hour": 2
+    },
+    {
+     "calls": 13,
+     "height": 22,
+     "hour": 3
+    },
+    {
+     "calls": 11,
+     "height": 19,
+     "hour": 4
+    },
+    {
+     "calls": 9,
+     "height": 15,
+     "hour": 5
+    },
+    {
+     "calls": 8,
+     "height": 14,
+     "hour": 6
+    },
+    {
+     "calls": 9,
+     "height": 15,
+     "hour": 7
+    },
+    {
+     "calls": 9,
+     "height": 15,
+     "hour": 8
+    },
+    {
+     "calls": 13,
+     "height": 22,
+     "hour": 9
+    },
+    {
+     "calls": 19,
+     "height": 32,
+     "hour": 10
+    },
+    {
+     "calls": 35,
+     "height": 59,
+     "hour": 11
+    },
+    {
+     "calls": 51,
+     "height": 86,
+     "hour": 12
+    },
+    {
+     "calls": 59,
+     "height": 100,
+     "hour": 13
+    },
+    {
+     "calls": 51,
+     "height": 86,
+     "hour": 14
+    },
+    {
+     "calls": 35,
+     "height": 59,
+     "hour": 15
+    },
+    {
+     "calls": 21,
+     "height": 36,
+     "hour": 16
+    },
+    {
+     "calls": 17,
+     "height": 29,
+     "hour": 17
+    },
+    {
+     "calls": 25,
+     "height": 42,
+     "hour": 18
+    },
+    {
+     "calls": 39,
+     "height": 66,
+     "hour": 19
+    },
+    {
+     "calls": 49,
+     "height": 83,
+     "hour": 20
+    },
+    {
+     "calls": 39,
+     "height": 66,
+     "hour": 21
+    },
+    {
+     "calls": 24,
+     "height": 41,
+     "hour": 22
+    },
+    {
+     "calls": 15,
+     "height": 25,
+     "hour": 23
+    }
+   ],
+   "most_errors": {
+    "actions": [
+     "Fix server errors",
+     "Speed up: very slow",
+     "Cache per user (30 s)"
+    ],
+    "advice": [
+     "5.6% server errors: check the Alerts tab for this application and fix the top error.",
+     "Very slow (p95 3,472 ms): add a database index, paginate, or precompute the result.",
+     "Cache per user for a short time (e.g. 30 s) to cut repeated calls."
+    ],
+    "avg_ms": 2025.855,
+    "cache": "per-user",
+    "cache_reason": "The answer depends on the user: only cache per user / session, with a short TTL.",
+    "calls": 180,
+    "client_error_rate": 0.0,
+    "error_rate": 0.05555555555555555,
+    "health": "unhealthy",
+    "max_ms": 6069.6,
+    "method": "GET",
+    "p50_ms": 1826.6,
+    "p95_ms": 3472.3,
+    "p99_ms": 5654.5,
+    "path": "/orders",
+    "peak_count": 19,
+    "peak_hour": 13,
+    "share": 0.30303030303030304
+   },
+   "open_alerts": 3,
+   "overview": {
+    "avg_ms": 1217.6542087542086,
+    "calls": 594,
+    "client_error_rate": 0.008417508417508417,
+    "error_rate": 0.021885521885521887,
+    "health": "unhealthy",
+    "max_ms": 7687.8,
+    "p50_ms": 796.6,
+    "p95_ms": 3542.7,
+    "p99_ms": 5654.5,
+    "peak_count": 59,
+    "peak_hour": 13
+   },
+   "quiet_hour": 6,
+   "recommendations": [
+    {
+     "api": "GET /orders",
+     "text": "5.6% server errors: check the Alerts tab for this application and fix the top error."
+    },
+    {
+     "api": "GET /orders/{id}",
+     "text": "1.1% server errors: check the Alerts tab for this application and fix the top error."
+    },
+    {
+     "api": "POST /orders",
+     "text": "1.1% server errors: check the Alerts tab for this application and fix the top error."
+    },
+    {
+     "api": "GET /orders",
+     "text": "Very slow (p95 3,472 ms): add a database index, paginate, or precompute the result."
+    },
+    {
+     "api": "GET /orders/{id}/invoice",
+     "text": "Very slow (p95 5,971 ms): add a database index, paginate, or precompute the result."
+    },
+    {
+     "api": "GET /orders/{id}",
+     "text": "Slow (p95 892 ms): find the slowest query or external call and add a timeout."
+    },
+    {
+     "api": "POST /orders",
+     "text": "Slow (p95 1,786 ms): find the slowest query or external call and add a timeout."
+    },
+    {
+     "api": "GET /orders",
+     "text": "Cache per user for a short time (e.g. 30 s) to cut repeated calls."
+    }
+   ],
+   "show_stoppers": 0,
+   "slowest": {
+    "actions": [
+     "Speed up: very slow",
+     "Cache per user (30 s)"
+    ],
+    "advice": [
+     "Very slow (p95 5,971 ms): add a database index, paginate, or precompute the result.",
+     "Cache per user for a short time (e.g. 30 s) to cut repeated calls."
+    ],
+    "avg_ms": 3348.1758620689657,
+    "cache": "per-user",
+    "cache_reason": "The answer depends on the user: only cache per user / session, with a short TTL.",
+    "calls": 58,
+    "client_error_rate": 0.0,
+    "error_rate": 0.0,
+    "health": "unhealthy",
+    "max_ms": 7687.8,
+    "method": "GET",
+    "p50_ms": 2945.5,
+    "p95_ms": 5970.7,
+    "p99_ms": 7687.8,
+    "path": "/orders/{id}/invoice",
+    "peak_count": 9,
+    "peak_hour": 2,
+    "share": 0.09764309764309764
+   },
+   "spike": 2.3838383838383836,
+   "status_groups": {
+    "2xx": 576,
+    "3xx": 0,
+    "4xx": 5,
+    "5xx": 13
+   }
+  },
+  "reporting-service": {
+   "apis": [
+    {
+     "actions": [
+      "Speed up: very slow",
+      "Cache (60 s, shared)"
+     ],
+     "advice": [
+      "Very slow (p95 3,374 ms): add a database index, paginate, or precompute the result.",
+      "Cache it: 42% of all calls, read-only and shared. A 60 s cache would serve most of them without touching the backend."
+     ],
+     "avg_ms": 1793.433962264151,
+     "cache": "yes",
+     "cache_reason": "Read-only and the same for everyone: safe to cache (CDN or Redis).",
+     "calls": 53,
+     "client_error_rate": 0.018867924528301886,
+     "error_rate": 0.0,
+     "health": "unhealthy",
+     "max_ms": 3756.6,
+     "method": "GET",
+     "p50_ms": 1550.6,
+     "p95_ms": 3373.7,
+     "p99_ms": 3756.6,
+     "path": "/reports/{id}",
+     "peak_count": 5,
+     "peak_hour": 12,
+     "share": 0.42063492063492064
+    },
+    {
+     "actions": [
+      "Speed up: slow",
+      "Cache (60 s, shared)"
+     ],
+     "advice": [
+      "Slow (p95 848 ms): find the slowest query or external call and add a timeout.",
+      "Cache it: 33% of all calls, read-only and shared. A 60 s cache would serve most of them without touching the backend."
+     ],
+     "avg_ms": 327.5048780487805,
+     "cache": "yes",
+     "cache_reason": "Read-only and the same for everyone: safe to cache (CDN or Redis).",
+     "calls": 41,
+     "client_error_rate": 0.0,
+     "error_rate": 0.0,
+     "health": "degraded",
+     "max_ms": 1146.8,
+     "method": "GET",
+     "p50_ms": 242.7,
+     "p95_ms": 848.2,
+     "p99_ms": 1146.8,
+     "path": "/dashboards",
+     "peak_count": 4,
+     "peak_hour": 13,
+     "share": 0.3253968253968254
+    },
+    {
+     "actions": [],
+     "advice": [],
+     "avg_ms": 7.68235294117647,
+     "cache": "no",
+     "cache_reason": "Reports live state; caching would hide problems.",
+     "calls": 17,
+     "client_error_rate": 0.0,
+     "error_rate": 0.0,
+     "health": "healthy",
+     "max_ms": 13.3,
+     "method": "GET",
+     "p50_ms": 7.5,
+     "p95_ms": 13.3,
+     "p99_ms": 13.3,
+     "path": "/health",
+     "peak_count": 2,
+     "peak_hour": 12,
+     "share": 0.1349206349206349
+    },
+    {
+     "actions": [
+      "Move to background job"
+     ],
+     "advice": [
+      "Very slow (p95 10,573 ms): move the slow work to a background job and return 202 straight away."
+     ],
+     "avg_ms": 5139.533333333334,
+     "cache": "no",
+     "cache_reason": "POST changes data, so it must always run.",
+     "calls": 15,
+     "client_error_rate": 0.06666666666666667,
+     "error_rate": 0.0,
+     "health": "unhealthy",
+     "max_ms": 10572.6,
+     "method": "POST",
+     "p50_ms": 4817.6,
+     "p95_ms": 10572.6,
+     "p99_ms": 10572.6,
+     "path": "/reports/export",
+     "peak_count": 3,
+     "peak_hour": 6,
+     "share": 0.11904761904761904
+    }
+   ],
+   "availability": 1.0,
+   "calls_per_min": 0.09019847436589551,
+   "hourly": [
+    {
+     "calls": 2,
+     "height": 18,
+     "hour": 0
+    },
+    {
+     "calls": 2,
+     "height": 18,
+     "hour": 1
+    },
+    {
+     "calls": 3,
+     "height": 27,
+     "hour": 2
+    },
+    {
+     "calls": 3,
+     "height": 27,
+     "hour": 3
+    },
+    {
+     "calls": 4,
+     "height": 36,
+     "hour": 4
+    },
+    {
+     "calls": 4,
+     "height": 36,
+     "hour": 5
+    },
+    {
+     "calls": 5,
+     "height": 45,
+     "hour": 6
+    },
+    {
+     "calls": 4,
+     "height": 36,
+     "hour": 7
+    },
+    {
+     "calls": 4,
+     "height": 36,
+     "hour": 8
+    },
+    {
+     "calls": 3,
+     "height": 27,
+     "hour": 9
+    },
+    {
+     "calls": 5,
+     "height": 45,
+     "hour": 10
+    },
+    {
+     "calls": 6,
+     "height": 55,
+     "hour": 11
+    },
+    {
+     "calls": 10,
+     "height": 91,
+     "hour": 12
+    },
+    {
+     "calls": 11,
+     "height": 100,
+     "hour": 13
+    },
+    {
+     "calls": 10,
+     "height": 91,
+     "hour": 14
+    },
+    {
+     "calls": 6,
+     "height": 55,
+     "hour": 15
+    },
+    {
+     "calls": 4,
+     "height": 36,
+     "hour": 16
+    },
+    {
+     "calls": 3,
+     "height": 27,
+     "hour": 17
+    },
+    {
+     "calls": 5,
+     "height": 45,
+     "hour": 18
+    },
+    {
+     "calls": 8,
+     "height": 73,
+     "hour": 19
+    },
+    {
+     "calls": 9,
+     "height": 82,
+     "hour": 20
+    },
+    {
+     "calls": 8,
+     "height": 73,
+     "hour": 21
+    },
+    {
+     "calls": 5,
+     "height": 45,
+     "hour": 22
+    },
+    {
+     "calls": 2,
+     "height": 18,
+     "hour": 23
+    }
+   ],
+   "most_errors": null,
+   "open_alerts": 1,
+   "overview": {
+    "avg_ms": 1473.8357142857142,
+    "calls": 126,
+    "client_error_rate": 0.015873015873015872,
+    "error_rate": 0.0,
+    "health": "unhealthy",
+    "max_ms": 10572.6,
+    "p50_ms": 944.3,
+    "p95_ms": 5082.0,
+    "p99_ms": 9056.2,
+    "peak_count": 11,
+    "peak_hour": 13
+   },
+   "quiet_hour": 0,
+   "recommendations": [
+    {
+     "api": "GET /reports/{id}",
+     "text": "Very slow (p95 3,374 ms): add a database index, paginate, or precompute the result."
+    },
+    {
+     "api": "POST /reports/export",
+     "text": "Very slow (p95 10,573 ms): move the slow work to a background job and return 202 straight away."
+    },
+    {
+     "api": "GET /dashboards",
+     "text": "Slow (p95 848 ms): find the slowest query or external call and add a timeout."
+    },
+    {
+     "api": "GET /reports/{id}",
+     "text": "Cache it: 42% of all calls, read-only and shared. A 60 s cache would serve most of them without touching the backend."
+    },
+    {
+     "api": "GET /dashboards",
+     "text": "Cache it: 33% of all calls, read-only and shared. A 60 s cache would serve most of them without touching the backend."
+    }
+   ],
+   "show_stoppers": 0,
+   "slowest": {
+    "actions": [
+     "Move to background job"
+    ],
+    "advice": [
+     "Very slow (p95 10,573 ms): move the slow work to a background job and return 202 straight away."
+    ],
+    "avg_ms": 5139.533333333334,
+    "cache": "no",
+    "cache_reason": "POST changes data, so it must always run.",
+    "calls": 15,
+    "client_error_rate": 0.06666666666666667,
+    "error_rate": 0.0,
+    "health": "unhealthy",
+    "max_ms": 10572.6,
+    "method": "POST",
+    "p50_ms": 4817.6,
+    "p95_ms": 10572.6,
+    "p99_ms": 10572.6,
+    "path": "/reports/export",
+    "peak_count": 3,
+    "peak_hour": 6,
+    "share": 0.11904761904761904
+   },
+   "spike": 2.0952380952380953,
+   "status_groups": {
+    "2xx": 124,
+    "3xx": 0,
+    "4xx": 2,
+    "5xx": 0
+   }
+  },
+  "sample-shop": {
+   "apis": [
+    {
+     "actions": [
+      "Cache (60 s, shared)"
+     ],
+     "advice": [
+      "Cache it: 30% of all calls, read-only and shared. A 60 s cache would serve most of them without touching the backend."
+     ],
+     "avg_ms": 87.38833333333334,
+     "cache": "yes",
+     "cache_reason": "Read-only and the same for everyone: safe to cache (CDN or Redis).",
+     "calls": 300,
+     "client_error_rate": 0.0,
+     "error_rate": 0.0,
+     "health": "healthy",
+     "max_ms": 322.5,
+     "method": "GET",
+     "p50_ms": 76.3,
+     "p95_ms": 176.4,
+     "p99_ms": 230.4,
+     "path": "/products",
+     "peak_count": 32,
+     "peak_hour": 13,
+     "share": 0.30120481927710846
+    },
+    {
+     "actions": [
+      "Cache (60 s, shared)"
+     ],
+     "advice": [
+      "Cache it: 25% of all calls, read-only and shared. A 60 s cache would serve most of them without touching the backend."
+     ],
+     "avg_ms": 70.45161290322581,
+     "cache": "yes",
+     "cache_reason": "Read-only and the same for everyone: safe to cache (CDN or Redis).",
+     "calls": 248,
+     "client_error_rate": 0.020161290322580645,
+     "error_rate": 0.0,
+     "health": "healthy",
+     "max_ms": 212.9,
+     "method": "GET",
+     "p50_ms": 63.6,
+     "p95_ms": 134.1,
+     "p99_ms": 172.3,
+     "path": "/products/{id}",
+     "peak_count": 26,
+     "peak_hour": 13,
+     "share": 0.24899598393574296
+    },
+    {
+     "actions": [
+      "Fix server errors",
+      "Cache per user (30 s)"
+     ],
+     "advice": [
+      "1.0% server errors: check the Alerts tab for this application and fix the top error.",
+      "Cache per user for a short time (e.g. 30 s) to cut repeated calls."
+     ],
+     "avg_ms": 110.7795918367347,
+     "cache": "per-user",
+     "cache_reason": "The answer depends on the user: only cache per user / session, with a short TTL.",
+     "calls": 98,
+     "client_error_rate": 0.0,
+     "error_rate": 0.01020408163265306,
+     "health": "degraded",
+     "max_ms": 239.3,
+     "method": "GET",
+     "p50_ms": 99.9,
+     "p95_ms": 185.1,
+     "p99_ms": 239.3,
+     "path": "/cart",
+     "peak_count": 11,
+     "peak_hour": 13,
+     "share": 0.09839357429718876
+    },
+    {
+     "actions": [],
+     "advice": [],
+     "avg_ms": 7.429591836734694,
+     "cache": "no",
+     "cache_reason": "Reports live state; caching would hide problems.",
+     "calls": 98,
+     "client_error_rate": 0.0,
+     "error_rate": 0.0,
+     "health": "healthy",
+     "max_ms": 19.2,
+     "method": "GET",
+     "p50_ms": 6.8,
+     "p95_ms": 14.2,
+     "p99_ms": 19.2,
+     "path": "/health",
+     "peak_count": 11,
+     "peak_hour": 13,
+     "share": 0.09839357429718876
+    },
+    {
+     "actions": [],
+     "advice": [],
+     "avg_ms": 169.97564102564104,
+     "cache": "no",
+     "cache_reason": "POST changes data, so it must always run.",
+     "calls": 78,
+     "client_error_rate": 0.0,
+     "error_rate": 0.0,
+     "health": "healthy",
+     "max_ms": 442.0,
+     "method": "POST",
+     "p50_ms": 162.6,
+     "p95_ms": 310.5,
+     "p99_ms": 442.0,
+     "path": "/cart/items",
+     "peak_count": 8,
+     "peak_hour": 13,
+     "share": 0.0783132530120482
+    },
+    {
+     "actions": [
+      "Cache (60 s, shared)"
+     ],
+     "advice": [
+      "Cache it: 8% of all calls, read-only and shared. A 60 s cache would serve most of them without touching the backend."
+     ],
+     "avg_ms": 42.243589743589745,
+     "cache": "yes",
+     "cache_reason": "Read-only and the same for everyone: safe to cache (CDN or Redis).",
+     "calls": 78,
+     "client_error_rate": 0.0,
+     "error_rate": 0.0,
+     "health": "healthy",
+     "max_ms": 106.0,
+     "method": "GET",
+     "p50_ms": 37.3,
+     "p95_ms": 72.8,
+     "p99_ms": 106.0,
+     "path": "/categories",
+     "peak_count": 8,
+     "peak_hour": 13,
+     "share": 0.0783132530120482
+    },
+    {
+     "actions": [
+      "Fix server errors",
+      "Cache per user (30 s)"
+     ],
+     "advice": [
+      "1.9% server errors: check the Alerts tab for this application and fix the top error.",
+      "Cache per user for a short time (e.g. 30 s) to cut repeated calls."
+     ],
+     "avg_ms": 229.88490566037734,
+     "cache": "per-user",
+     "cache_reason": "The answer depends on the user: only cache per user / session, with a short TTL.",
+     "calls": 53,
+     "client_error_rate": 0.018867924528301886,
+     "error_rate": 0.018867924528301886,
+     "health": "degraded",
+     "max_ms": 429.9,
+     "method": "GET",
+     "p50_ms": 218.1,
+     "p95_ms": 415.0,
+     "p99_ms": 429.9,
+     "path": "/orders/{id}",
+     "peak_count": 5,
+     "peak_hour": 12,
+     "share": 0.05321285140562249
+    },
+    {
+     "actions": [
+      "Fix server errors",
+      "Speed up: slow"
+     ],
+     "advice": [
+      "7.0% server errors: check the Alerts tab for this application and fix the top error.",
+      "Slow (p95 1,889 ms): find the slowest query or external call and add a timeout."
+     ],
+     "avg_ms": 1188.260465116279,
+     "cache": "no",
+     "cache_reason": "POST changes data, so it must always run.",
+     "calls": 43,
+     "client_error_rate": 0.0,
+     "error_rate": 0.06976744186046512,
+     "health": "unhealthy",
+     "max_ms": 2156.2,
+     "method": "POST",
+     "p50_ms": 1143.4,
+     "p95_ms": 1888.7,
+     "p99_ms": 2156.2,
+     "path": "/checkout",
+     "peak_count": 4,
+     "peak_hour": 12,
+     "share": 0.04317269076305221
+    }
+   ],
+   "availability": 0.9949799196787149,
+   "calls_per_min": 0.6924904860016643,
+   "hourly": [
+    {
+     "calls": 17,
+     "height": 16,
+     "hour": 0
+    },
+    {
+     "calls": 13,
+     "height": 12,
+     "hour": 1
+    },
+    {
+     "calls": 13,
+     "height": 12,
+     "hour": 2
+    },
+    {
+     "calls": 13,
+     "height": 12,
+     "hour": 3
+    },
+    {
+     "calls": 13,
+     "height": 12,
+     "hour": 4
+    },
+    {
+     "calls": 13,
+     "height": 12,
+     "hour": 5
+    },
+    {
+     "calls": 13,
+     "height": 12,
+     "hour": 6
+    },
+    {
+     "calls": 14,
+     "height": 13,
+     "hour": 7
+    },
+    {
+     "calls": 17,
+     "height": 16,
+     "hour": 8
+    },
+    {
+     "calls": 21,
+     "height": 20,
+     "hour": 9
+    },
+    {
+     "calls": 37,
+     "height": 35,
+     "hour": 10
+    },
+    {
+     "calls": 62,
+     "height": 59,
+     "hour": 11
+    },
+    {
+     "calls": 92,
+     "height": 88,
+     "hour": 12
+    },
+    {
+     "calls": 105,
+     "height": 100,
+     "hour": 13
+    },
+    {
+     "calls": 92,
+     "height": 88,
+     "hour": 14
+    },
+    {
+     "calls": 62,
+     "height": 59,
+     "hour": 15
+    },
+    {
+     "calls": 37,
+     "height": 35,
+     "hour": 16
+    },
+    {
+     "calls": 28,
+     "height": 27,
+     "hour": 17
+    },
+    {
+     "calls": 42,
+     "height": 40,
+     "hour": 18
+    },
+    {
+     "calls": 72,
+     "height": 69,
+     "hour": 19
+    },
+    {
+     "calls": 87,
+     "height": 83,
+     "hour": 20
+    },
+    {
+     "calls": 72,
+     "height": 69,
+     "hour": 21
+    },
+    {
+     "calls": 40,
+     "height": 38,
+     "hour": 22
+    },
+    {
+     "calls": 21,
+     "height": 20,
+     "hour": 23
+    }
+   ],
+   "most_errors": {
+    "actions": [
+     "Fix server errors",
+     "Speed up: slow"
+    ],
+    "advice": [
+     "7.0% server errors: check the Alerts tab for this application and fix the top error.",
+     "Slow (p95 1,889 ms): find the slowest query or external call and add a timeout."
+    ],
+    "avg_ms": 1188.260465116279,
+    "cache": "no",
+    "cache_reason": "POST changes data, so it must always run.",
+    "calls": 43,
+    "client_error_rate": 0.0,
+    "error_rate": 0.06976744186046512,
+    "health": "unhealthy",
+    "max_ms": 2156.2,
+    "method": "POST",
+    "p50_ms": 1143.4,
+    "p95_ms": 1888.7,
+    "p99_ms": 2156.2,
+    "path": "/checkout",
+    "peak_count": 4,
+    "peak_hour": 12,
+    "share": 0.04317269076305221
+   },
+   "open_alerts": 0,
+   "overview": {
+    "avg_ms": 135.64779116465866,
+    "calls": 996,
+    "client_error_rate": 0.006024096385542169,
+    "error_rate": 0.0050200803212851405,
+    "health": "healthy",
+    "max_ms": 2156.2,
+    "p50_ms": 73.7,
+    "p95_ms": 385.6,
+    "p99_ms": 1548.5,
+    "peak_count": 105,
+    "peak_hour": 13
+   },
+   "quiet_hour": 1,
+   "recommendations": [
+    {
+     "api": "Whole application",
+     "text": "Traffic at 13:00 UTC is 2.5x the average hour. Scale out before the peak (or enable autoscaling) and avoid deploys at that time."
+    },
+    {
+     "api": "GET /cart",
+     "text": "1.0% server errors: check the Alerts tab for this application and fix the top error."
+    },
+    {
+     "api": "GET /orders/{id}",
+     "text": "1.9% server errors: check the Alerts tab for this application and fix the top error."
+    },
+    {
+     "api": "POST /checkout",
+     "text": "7.0% server errors: check the Alerts tab for this application and fix the top error."
+    },
+    {
+     "api": "POST /checkout",
+     "text": "Slow (p95 1,889 ms): find the slowest query or external call and add a timeout."
+    },
+    {
+     "api": "GET /products",
+     "text": "Cache it: 30% of all calls, read-only and shared. A 60 s cache would serve most of them without touching the backend."
+    },
+    {
+     "api": "GET /products/{id}",
+     "text": "Cache it: 25% of all calls, read-only and shared. A 60 s cache would serve most of them without touching the backend."
+    },
+    {
+     "api": "GET /cart",
+     "text": "Cache per user for a short time (e.g. 30 s) to cut repeated calls."
+    }
+   ],
+   "show_stoppers": 0,
+   "slowest": {
+    "actions": [
+     "Fix server errors",
+     "Speed up: slow"
+    ],
+    "advice": [
+     "7.0% server errors: check the Alerts tab for this application and fix the top error.",
+     "Slow (p95 1,889 ms): find the slowest query or external call and add a timeout."
+    ],
+    "avg_ms": 1188.260465116279,
+    "cache": "no",
+    "cache_reason": "POST changes data, so it must always run.",
+    "calls": 43,
+    "client_error_rate": 0.0,
+    "error_rate": 0.06976744186046512,
+    "health": "unhealthy",
+    "max_ms": 2156.2,
+    "method": "POST",
+    "p50_ms": 1143.4,
+    "p95_ms": 1888.7,
+    "p99_ms": 2156.2,
+    "path": "/checkout",
+    "peak_count": 4,
+    "peak_hour": 12,
+    "share": 0.04317269076305221
+   },
+   "spike": 2.5301204819277108,
+   "status_groups": {
+    "2xx": 985,
+    "3xx": 0,
+    "4xx": 6,
+    "5xx": 5
+   }
+  }
+ },
+ "overview": [
+  {
+   "app": "auth-gateway",
+   "avg_ms": 101.3012683578104,
+   "calls": 1498,
+   "client_error_rate": 0.07209612817089453,
+   "error_rate": 0.0006675567423230974,
+   "health": "unhealthy",
+   "max_ms": 567.9,
+   "open_alerts": 4,
+   "p50_ms": 80.7,
+   "p95_ms": 282.4,
+   "p99_ms": 406.7,
+   "peak_count": 113,
+   "peak_hour": 12,
+   "show_stoppers": 1,
+   "top_api": "POST /oauth/token"
+  },
+  {
+   "app": "checkout-api",
+   "avg_ms": 332.61274900398405,
+   "calls": 753,
+   "client_error_rate": 0.005312084993359893,
+   "error_rate": 0.01593625498007968,
+   "health": "unhealthy",
+   "max_ms": 2585.3,
+   "open_alerts": 4,
+   "p50_ms": 111.4,
+   "p95_ms": 1207.5,
+   "p99_ms": 1777.7,
+   "peak_count": 80,
+   "peak_hour": 13,
+   "show_stoppers": 1,
+   "top_api": "GET /checkout/{id}/status"
+  },
+  {
+   "app": "orders-service",
+   "avg_ms": 1217.6542087542086,
+   "calls": 594,
+   "client_error_rate": 0.008417508417508417,
+   "error_rate": 0.021885521885521887,
+   "health": "unhealthy",
+   "max_ms": 7687.8,
+   "open_alerts": 3,
+   "p50_ms": 796.6,
+   "p95_ms": 3542.7,
+   "p99_ms": 5654.5,
+   "peak_count": 59,
+   "peak_hour": 13,
+   "show_stoppers": 0,
+   "top_api": "GET /orders"
+  },
+  {
+   "app": "reporting-service",
+   "avg_ms": 1473.8357142857142,
+   "calls": 126,
+   "client_error_rate": 0.015873015873015872,
+   "error_rate": 0.0,
+   "health": "unhealthy",
+   "max_ms": 10572.6,
+   "open_alerts": 1,
+   "p50_ms": 944.3,
+   "p95_ms": 5082.0,
+   "p99_ms": 9056.2,
+   "peak_count": 11,
+   "peak_hour": 13,
+   "show_stoppers": 0,
+   "top_api": "GET /reports/{id}"
+  },
+  {
+   "app": "notification-service",
+   "avg_ms": 500.1935555555556,
+   "calls": 450,
+   "client_error_rate": 0.015555555555555555,
+   "error_rate": 0.006666666666666667,
+   "health": "degraded",
+   "max_ms": 2785.5,
+   "open_alerts": 1,
+   "p50_ms": 412.7,
+   "p95_ms": 1499.4,
+   "p99_ms": 1971.0,
+   "peak_count": 47,
+   "peak_hour": 13,
+   "show_stoppers": 0,
+   "top_api": "POST /emails"
+  },
+  {
+   "app": "billing-service",
+   "avg_ms": 509.5704697986577,
+   "calls": 298,
+   "client_error_rate": 0.010067114093959731,
+   "error_rate": 0.006711409395973154,
+   "health": "degraded",
+   "max_ms": 17373.7,
+   "open_alerts": 1,
+   "p50_ms": 147.0,
+   "p95_ms": 1359.1,
+   "p99_ms": 9884.8,
+   "peak_count": 31,
+   "peak_hour": 13,
+   "show_stoppers": 0,
+   "top_api": "GET /invoices/{id}"
+  },
+  {
+   "app": "sample-shop",
+   "avg_ms": 135.64779116465866,
+   "calls": 996,
+   "client_error_rate": 0.006024096385542169,
+   "error_rate": 0.0050200803212851405,
+   "health": "healthy",
+   "max_ms": 2156.2,
+   "open_alerts": 0,
+   "p50_ms": 73.7,
+   "p95_ms": 385.6,
+   "p99_ms": 1548.5,
+   "peak_count": 105,
+   "peak_hour": 13,
+   "show_stoppers": 0,
+   "top_api": "GET /products"
+  }
+ ]
+}

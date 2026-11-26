@@ -1,0 +1,137 @@
+[
+ {
+  "description": "412 errors in 10 min: NullPointerException at com.shop.payment.PaymentClient.authorize(PaymentClient.java:88)",
+  "location": {
+   "column": null,
+   "file": "PaymentClient.java",
+   "folder": "com/shop/payment/",
+   "function": "PaymentClient.authorize",
+   "goto": "com/shop/payment/PaymentClient.java:88",
+   "hint": "Java package folder; in the repository usually under src/main/java/ (or src/main/kotlin/).",
+   "language": "Java",
+   "line": 88,
+   "path": "com/shop/payment/PaymentClient.java"
+  }
+ },
+ {
+  "description": "java.lang.NullPointerException\n        at java.util.Objects.requireNonNull(Objects.java:209)\n        at com.shop.orders.OrderService.place(OrderService.java:41)\n        at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883)",
+  "location": {
+   "column": null,
+   "file": "OrderService.java",
+   "folder": "com/shop/orders/",
+   "function": "OrderService.place",
+   "goto": "com/shop/orders/OrderService.java:41",
+   "hint": "Java package folder; in the repository usually under src/main/java/ (or src/main/kotlin/).",
+   "language": "Java",
+   "line": 41,
+   "path": "com/shop/orders/OrderService.java"
+  }
+ },
+ {
+  "description": "Traceback (most recent call last):\n  File \"/srv/app/orders/views.py\", line 12, in create\n    total = pricing.total(order)\n  File \"/srv/app/orders/pricing.py\", line 52, in total\n    return order[\"coupon\"][\"percent\"]\n  File \"/usr/lib/python3.12/site-packages/x/y.py\", line 3, in z\nTypeError: 'NoneType' object is not subscriptable",
+  "location": {
+   "column": null,
+   "file": "pricing.py",
+   "folder": "/srv/app/orders/",
+   "function": "total",
+   "goto": "/srv/app/orders/pricing.py:52",
+   "hint": "",
+   "language": "Python",
+   "line": 52,
+   "path": "/srv/app/orders/pricing.py"
+  }
+ },
+ {
+  "description": "System.NullReferenceException\n   at Shop.Orders.OrderService.Create(Order o) in C:\\src\\Shop\\Orders\\OrderService.cs:line 42",
+  "location": {
+   "column": null,
+   "file": "OrderService.cs",
+   "folder": "C:/src/Shop/Orders/",
+   "function": "OrderService.Create",
+   "goto": "C:/src/Shop/Orders/OrderService.cs:42",
+   "hint": "",
+   "language": ".NET",
+   "line": 42,
+   "path": "C:/src/Shop/Orders/OrderService.cs"
+  }
+ },
+ {
+  "description": "TypeError: Cannot read properties of undefined (reading 'id')\n    at Object.get (/srv/app/node_modules/lodash/get.js:10:3)\n    at createOrder (/srv/app/src/orders/service.ts:31:7)",
+  "location": {
+   "column": 7,
+   "file": "service.ts",
+   "folder": "/srv/app/src/orders/",
+   "function": "createOrder",
+   "goto": "/srv/app/src/orders/service.ts:31",
+   "hint": "",
+   "language": "JavaScript",
+   "line": 31,
+   "path": "/srv/app/src/orders/service.ts"
+  }
+ },
+ {
+  "description": "panic: runtime error\n\t/srv/app/orders/handler.go:42 +0x1d",
+  "location": {
+   "column": null,
+   "file": "handler.go",
+   "folder": "/srv/app/orders/",
+   "function": null,
+   "goto": "/srv/app/orders/handler.go:42",
+   "hint": "",
+   "language": "",
+   "line": 42,
+   "path": "/srv/app/orders/handler.go"
+  }
+ },
+ {
+  "description": "CPU above 90% on i-0abc for 5 minutes",
+  "location": null
+ },
+ {
+  "description": "at /srv/app/server.js:5:1",
+  "location": {
+   "column": 1,
+   "file": "server.js",
+   "folder": "/srv/app/",
+   "function": null,
+   "goto": "/srv/app/server.js:5",
+   "hint": "",
+   "language": "JavaScript",
+   "line": 5,
+   "path": "/srv/app/server.js"
+  }
+ },
+ {
+  "description": "error in lib/billing/invoice.rb:17 while rendering",
+  "location": {
+   "column": null,
+   "file": "invoice.rb",
+   "folder": "lib/billing/",
+   "function": null,
+   "goto": "lib/billing/invoice.rb:17",
+   "hint": "",
+   "language": "",
+   "line": 17,
+   "path": "lib/billing/invoice.rb"
+  }
+ },
+ {
+  "description": "",
+  "labels": {
+   "file": "sample_app/shop.py",
+   "function": "apply_coupon",
+   "line": "52"
+  },
+  "location": {
+   "column": null,
+   "file": "shop.py",
+   "folder": "sample_app/",
+   "function": "apply_coupon",
+   "goto": "sample_app/shop.py:52",
+   "hint": "",
+   "language": "",
+   "line": 52,
+   "path": "sample_app/shop.py"
+  }
+ }
+]

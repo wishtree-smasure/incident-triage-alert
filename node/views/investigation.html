@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}{{ inv.alert.title }} · Incident Triage{% endblock %}
+{% block content %}
+  {% set alert = inv.alert %}
+  <p><a href="/">← All alerts</a></p>
+  <h1><span class="badge {{ inv.level }}">{{ inv.level|capitalize }}</span> {{ alert.title }}</h1>
+  <p class="sub">
+    {{ inv.severity or 'Severity unknown' }} · {{ inv.service }} · status <strong>{{ inv.status }}</strong>
+    · seen {{ inv.dedup_count }} time{{ 's' if inv.dedup_count != 1 }}
+  </p>
+
+  <section class="card">
+    <h2>Where it breaks</h2>
+    {% set loc = code_location(alert) %}
+    {% if loc %}
+      <dl class="facts code-loc">
+        <dt>File</dt>
+        <dd><code class="where">{{ loc.file }}</code> <span class="loc-line">line {{ loc.line }}{% if loc.column %}, column {{ loc.column }}{% endif %}</span></dd>
+        <dt>Folder</dt>
+        <dd><code>{{ loc.folder or '(project root)' }}</code></dd>
+        {% if loc.function %}<dt>Function</dt><dd><code>{{ loc.function }}()</code></dd>{% endif %}
+        <dt>Full path</dt>
+        <dd><code>{{ loc.goto }}</code> <button type="button" class="copy" data-copy="{{ loc.goto }}">Copy</button></dd>
+      </dl>
+      {% if loc.hint %}<p class="note">{{ loc.hint }}</p>{% endif %}
+      <p class="note">Paste the full path into your editor's "Go to file" (VS Code: Ctrl+P) to jump straight to the line.</p>
+    {% elif alert.resource %}
+      <p class="where"><code>{{ alert.resource }}</code></p>
+    {% else %}
+      <p class="muted">Unknown</p>
+    {% endif %}
+    {% if alert.labels.error %}<p><strong>Error:</strong> <code>{{ alert.labels.error }}</code></p>{% endif %}
+  </section>
+
+  <section class="card">
+    <h2>Why it breaks and how to fix it</h2>
+    {% if inv.verdict %}
+      {% set v = inv.verdict %}
+      <p><strong>Root cause:</strong> {{ v.root_cause }}</p>
+      <p>{{ v.summary }}</p>
+      {% if v.evidence|length %}
+        <p><strong>Evidence</strong></p>
+        <ul>{% for e in v.evidence %}<li>{{ e.claim }} <span class="muted">({{ e.tool_call_id }})</span></li>{% endfor %}</ul>
+      {% endif %}
+      {% if v.next_checks|length %}
+        <p><strong>Fix / next steps</strong></p>
+        <ul>{% for step in v.next_checks %}<li>{{ step }}</li>{% endfor %}</ul>
+      {% endif %}
+      {% if v.ruled_out|length %}
+        <p><strong>Ruled out</strong></p>
+        <ul>{% for r in v.ruled_out %}<li>{{ r }}</li>{% endfor %}</ul>
+      {% endif %}
+    {% elif inv.suggestion %}
+      <p><strong>Likely cause:</strong> {{ inv.suggestion.cause }}</p>
+      <p><strong>Immediate action:</strong> {{ inv.suggestion.immediate }}</p>
+      <p><strong>Proper fix:</strong> {{ inv.suggestion.fix }}</p>
+      <p class="note">From the playbook (config/playbook.yaml). The AI agent (build step 3) will confirm the real root cause with evidence.</p>
+    {% else %}
+      <p class="muted">No playbook rule matches this alert yet. Add one to config/playbook.yaml,
+        or wait for the AI agent (build step 3) to investigate it.</p>
+    {% endif %}
+  </section>
+
+  <section class="card">
+    <h2>Details</h2>
+    <dl class="facts">
+      <dt>Received</dt><dd>{{ inv.created_at|ymdhms }} UTC</dd>
+      <dt>Fired</dt><dd>{{ alert.fired_at|ymdhms }} UTC</dd>
+      <dt>Application</dt><dd>{{ inv.service }}</dd>
+      <dt>Source</dt><dd>{{ source_name }} ({{ alert.source_type }})</dd>
+      {% if alert.resource %}<dt>Resource</dt><dd><code>{{ alert.resource }}</code></dd>{% endif %}
+    </dl>
+  </section>
+
+  {% if alert.description %}
+  <section class="card">
+    <h2>Message and stack trace</h2>
+    <pre>{{ alert.description }}</pre>
+  </section>
+  {% endif %}
+{% endblock %}
